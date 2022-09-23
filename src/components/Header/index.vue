@@ -23,10 +23,15 @@
         </div>
         <ul class="middleNav">
           <li><a href="javascript:;">首页</a></li>
-          <li>
-            <a href="javascript:;">居家</a>
+          <li v-for="nav in headerData" :key="nav.id">
+            <a href="javascript:;">{{nav.name}}</a>
             <ul class="dropDownMenu">
-              <li>
+              <li v-for="navChildren in nav.children" :key="navChildren.id">
+                <a href="javascript:;"><img :src="navChildren.picture" />
+                  <p>{{navChildren.name}}</p>
+                </a>
+              </li>
+              <!-- <li>
                 <a href="javascript:;"><img src="./images/product1.png" />
                   <p>茶咖酒具</p>
                 </a>
@@ -40,15 +45,10 @@
                 <a href="javascript:;"><img src="./images/product1.png" />
                   <p>茶咖酒具</p>
                 </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
+              </li> -->
             </ul>
           </li>
-          <li><a href="javascript:;">美食
+          <!-- <li><a href="javascript:;">美食
               <ul class="dropDownMenu">
                 <li>
                   <a href="javascript:;"><img src="./images/product1.png" />
@@ -78,7 +78,7 @@
           <li><a href="javascript:;">严选</a></li>
           <li><a href="javascript:;">数码</a></li>
           <li><a href="javascript:;">运动</a></li>
-          <li><a href="javascript:;">杂项</a></li>
+          <li><a href="javascript:;">杂项</a></li> -->
         </ul>
         <div class="rightSearch">
           <div class="searchIpu">
@@ -101,22 +101,22 @@
             <a href="javascript:;">居家</a>
             <ul class="dropDownMenu">
               <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
+                <a href="javascript:;"><img src="" />
                   <p>茶咖酒具</p>
                 </a>
               </li>
               <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
+                <a href="javascript:;"><img src="" />
                   <p>茶咖酒具</p>
                 </a>
               </li>
               <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
+                <a href="javascript:;"><img src="" />
                   <p>茶咖酒具</p>
                 </a>
               </li>
               <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
+                <a href="javascript:;"><img src="" />
                   <p>茶咖酒具</p>
                 </a>
               </li>
@@ -141,16 +141,25 @@
 </template>
 
 <script setup lang="ts">
-  import {ref,watch} from "vue"
-  // 控制固定导航显隐的参考值
-  let isHidden = ref(true)
-  // 监听页面滚动高度
-  const getScollTop = () => {
-    let top = document.documentElement.scrollTop
-    isHidden.value = top > 80 ? false : true
-  }
-  window.addEventListener('scroll',getScollTop)
-  
+import { ref, watch, onMounted } from "vue"
+import { useHeaderStore } from '@/store/home'
+import { storeToRefs } from 'pinia'
+// 控制固定导航显隐的参考值
+let isHidden = ref(true)
+// 监听页面滚动高度
+const getScollTop = () => {
+  let top = document.documentElement.scrollTop
+  isHidden.value = top > 80 ? false : true
+}
+window.addEventListener('scroll', getScollTop)
+
+const headerStore = useHeaderStore()
+// 从store中获取headerData
+let { headerData } = storeToRefs(headerStore)
+onMounted(() => {
+  // 请求获取头部数据
+  headerStore.reqHeaderStoreData()
+})
 </script>
 
 <style lang="less" scoped>
@@ -314,6 +323,7 @@
   transform: none;
   opacity: 1;
   transition: all .3s linear;
+
   .container {
     display: flex;
     align-items: center;
@@ -399,7 +409,8 @@
     }
   }
 }
-.fixedNavActive{
+
+.fixedNavActive {
   transform: translateY(-100%);
   opacity: 0;
 }
