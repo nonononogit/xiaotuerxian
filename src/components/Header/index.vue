@@ -21,17 +21,33 @@
         <div class="leftLogo">
           <a href="javascript:;" class="logo"></a>
         </div>
-        <ul class="middleNav">
-          <li><a href="javascript:;">首页</a></li>
-          <li v-for="nav in headerData" :key="nav.id">
-            <a href="javascript:;">{{nav.name}}</a>
-            <ul class="dropDownMenu">
-              <li v-for="navChildren in nav.children" :key="navChildren.id">
-                <a href="javascript:;"><img :src="navChildren.picture" />
-                  <p>{{navChildren.name}}</p>
-                </a>
-              </li>
-              <!-- <li>
+        <el-skeleton :loading="mainNavLoading">
+          <template #template>
+            <ul class="middleNav">
+              <li><a href="javascript:;">首页</a></li>
+              <li><a href="javascript:;">居家</a></li>
+              <li><a href="javascript:;">美食</a></li>
+              <li><a href="javascript:;">服饰</a></li>
+              <li><a href="javascript:;">母婴</a></li>
+              <li><a href="javascript:;">个护</a></li>
+              <li><a href="javascript:;">严选</a></li>
+              <li><a href="javascript:;">数码</a></li>
+              <li><a href="javascript:;">运动</a></li>
+              <li><a href="javascript:;">杂项</a></li>
+            </ul>
+          </template>
+          <template #default>
+            <ul class="middleNav">
+              <li><a href="javascript:;">首页</a></li>
+              <li v-for="nav in headerData" :key="nav.id">
+                <a href="javascript:;">{{nav.name}}</a>
+                <ul class="dropDownMenu">
+                  <li v-for="navChildren in nav.children" :key="navChildren.id">
+                    <a href="javascript:;"><img :src="navChildren.picture" />
+                      <p>{{navChildren.name}}</p>
+                    </a>
+                  </li>
+                  <!-- <li>
                 <a href="javascript:;"><img src="./images/product1.png" />
                   <p>茶咖酒具</p>
                 </a>
@@ -46,40 +62,11 @@
                   <p>茶咖酒具</p>
                 </a>
               </li> -->
+                </ul>
+              </li>
             </ul>
-          </li>
-          <!-- <li><a href="javascript:;">美食
-              <ul class="dropDownMenu">
-                <li>
-                  <a href="javascript:;"><img src="./images/product1.png" />
-                    <p>茶咖酒具</p>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:;"><img src="./images/product1.png" />
-                    <p>茶咖酒具</p>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:;"><img src="./images/product1.png" />
-                    <p>茶咖酒具</p>
-                  </a>
-                </li>
-                <li>
-                  <a href="javascript:;"><img src="./images/product1.png" />
-                    <p>茶咖酒具</p>
-                  </a>
-                </li>
-              </ul>
-            </a></li>
-          <li><a href="javascript:;">服饰</a></li>
-          <li><a href="javascript:;">母婴</a></li>
-          <li><a href="javascript:;">个护</a></li>
-          <li><a href="javascript:;">严选</a></li>
-          <li><a href="javascript:;">数码</a></li>
-          <li><a href="javascript:;">运动</a></li>
-          <li><a href="javascript:;">杂项</a></li> -->
-        </ul>
+          </template>
+        </el-skeleton>
         <div class="rightSearch">
           <div class="searchIpu">
             <i class="iconfont iconsousuo"></i>
@@ -95,42 +82,37 @@
     <div class="fixedNav" :class="{fixedNavActive:isHidden}">
       <div class="container">
         <a href="javascript:;" class="logo"></a>
-        <ul>
-          <li><a href="javascript:;">首页</a></li>
-          <li>
-            <a href="javascript:;">居家</a>
-            <ul class="dropDownMenu">
-              <li>
-                <a href="javascript:;"><img src="" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="" />
-                  <p>茶咖酒具</p>
-                </a>
+        <el-skeleton :loading="mainNavLoading" class="fixed-nav-skeleton">
+          <template #template>
+            <ul class="middleNav">
+              <li><a href="javascript:;">首页</a></li>
+              <li><a href="javascript:;">居家</a></li>
+              <li><a href="javascript:;">美食</a></li>
+              <li><a href="javascript:;">服饰</a></li>
+              <li><a href="javascript:;">母婴</a></li>
+              <li><a href="javascript:;">个护</a></li>
+              <li><a href="javascript:;">严选</a></li>
+              <li><a href="javascript:;">数码</a></li>
+              <li><a href="javascript:;">运动</a></li>
+              <li><a href="javascript:;">杂项</a></li>
+            </ul>
+          </template>
+          <template #default>
+            <ul>
+              <li><a href="javascript:;">首页</a></li>
+              <li v-for="nav in headerData" :key="nav.id">
+                <a href="javascript:;">{{nav.name}}</a>
+                <ul class="dropDownMenu">
+                  <li v-for="navChildren in nav.children" :key="navChildren.id">
+                    <a href="javascript:;"><img :src="navChildren.picture" />
+                      <p>{{navChildren.name}}</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
-          </li>
-          <li><a href="javascript:;">美食</a></li>
-          <li><a href="javascript:;">服饰</a></li>
-          <li><a href="javascript:;">母婴</a></li>
-          <li><a href="javascript:;">个护</a></li>
-          <li><a href="javascript:;">严选</a></li>
-          <li><a href="javascript:;">数码</a></li>
-          <li><a href="javascript:;">运动</a></li>
-          <li><a href="javascript:;">杂项</a></li>
-        </ul>
+          </template>
+        </el-skeleton>
         <div class="rightBrand">
           <a href="javascript:;">品牌</a>
           <a href="javascript:;">专题</a>
@@ -146,6 +128,8 @@ import { useHeaderStore } from '@/store/home'
 import { storeToRefs } from 'pinia'
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
+// 控制头部导航加载状态的参考值
+let mainNavLoading = ref(true)
 // 监听页面滚动高度
 const getScollTop = () => {
   let top = document.documentElement.scrollTop
@@ -156,9 +140,11 @@ window.addEventListener('scroll', getScollTop)
 const headerStore = useHeaderStore()
 // 从store中获取headerData
 let { headerData } = storeToRefs(headerStore)
-onMounted(() => {
+onMounted(async () => {
   // 请求获取头部数据
-  headerStore.reqHeaderStoreData()
+  await headerStore.reqHeaderStoreData()
+  // 控制头部导航加载状态
+  mainNavLoading.value = false
 })
 </script>
 
@@ -213,6 +199,12 @@ onMounted(() => {
       }
     }
 
+    :deep(.el-skeleton) {
+      display: flex;
+      width: 820px;
+
+    }
+
     .middleNav {
       display: flex;
       justify-content: space-around;
@@ -221,6 +213,7 @@ onMounted(() => {
       padding: 0 20px;
 
       &>li {
+        width: 32px;
         height: 32px;
         line-height: 32px;
 
@@ -406,6 +399,10 @@ onMounted(() => {
 
     a:hover {
       color: #27bb9a;
+    }
+    .fixed-nav-skeleton{
+      display: flex;
+      width: 820px;
     }
   }
 }

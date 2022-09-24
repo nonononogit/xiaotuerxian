@@ -23,7 +23,7 @@ instance.interceptors.response.use((response: AxiosResponse<ResponseData<any>, a
   return response.data.result;
 }, error => {
   NProgress.done()
-  // // 对响应错误做点什么
+  // 对响应错误做点什么
   // if (error.message.indexOf('timeout') != -1) {
   //   ElMessage.error('网络超时');
   // } else if (error.message == 'Network Error') {

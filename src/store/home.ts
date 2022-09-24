@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import type{HeaderData,BrandData,BannerData} from '@/api/home'
+import type{HeaderData,BrandData,BannerData,NewGoodsData} from '@/api/home'
 import headerApi from '@/api/home'
 import { ElMessage } from 'element-plus'
 
@@ -7,7 +7,8 @@ import { ElMessage } from 'element-plus'
 type HeaderStoreStateData={
   headerData:HeaderData,
   brandData:BrandData,
-  bannerData:BannerData
+  bannerData:BannerData,
+  newGoodsData:NewGoodsData
 }
 // 定义header的store
 export const useHeaderStore = defineStore('header',{
@@ -15,7 +16,8 @@ export const useHeaderStore = defineStore('header',{
     return {
       headerData:[],
       brandData:[],
-      bannerData:[]
+      bannerData:[],
+      newGoodsData:[]
     }
   },
   actions:{
@@ -44,6 +46,15 @@ export const useHeaderStore = defineStore('header',{
         this.bannerData = result
       } catch (error) {
         ElMessage.error('请求获取banner数据失败')
+      }
+    },
+    // 请求newGoods数据
+    async reqNewGoodsStoreData(){
+      try {
+        const result = await headerApi.reqNewGoodsData()
+        this.newGoodsData = result
+      } catch (error) {
+        ElMessage.error('请求获取新鲜好物数据失败')
       }
     }
   }

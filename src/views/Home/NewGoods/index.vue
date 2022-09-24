@@ -2,7 +2,7 @@
   <!-- 新鲜好物和人气推荐 -->
   <div class="newGoodsAndPopularity">
     <!-- 新鲜好物 -->
-    <div class="newGoods">
+    <div class="newGoods" ref="target">
       <div class="container">
         <h2 class="newGoodsTitle">
           新鲜好物
@@ -85,7 +85,13 @@
 </template>
 
 <script setup lang="ts">
-
+import {useLazyData} from '@/hooks/useLazyData'
+import {ref} from 'vue'
+import { useHeaderStore } from '@/store/home'
+import { storeToRefs } from 'pinia'
+const headerStore = useHeaderStore()
+const target = useLazyData(()=>{headerStore.reqNewGoodsStoreData()})
+let { newGoodsData } = storeToRefs(headerStore)
 </script>
 
 <style lang="less" scoped>
