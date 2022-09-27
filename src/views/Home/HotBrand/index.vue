@@ -1,22 +1,15 @@
 <template>
   <!-- 热门品牌 -->
-  <div class="hotBrand">
+  <div class="hotBrand" ref="hotBrand">
     <div class="container">
       <h2>
         热门品牌
         <span>国际经典&nbsp;品质保证</span>
       </h2>
       <swiper :modules="modules" :slides-per-view="5" :slides-per-group="5" :space-between="10" navigation>
-        <swiper-slide>Slide 1</swiper-slide>
-        <swiper-slide>Slide 2</swiper-slide>
-        <swiper-slide>Slide 3</swiper-slide>
-        <swiper-slide>Slide 4</swiper-slide>
-        <swiper-slide>Slide 5</swiper-slide>
-        <swiper-slide>Slide 6</swiper-slide>
-        <swiper-slide>Slide 6</swiper-slide>
-        <swiper-slide>Slide 6</swiper-slide>
-        <swiper-slide>Slide 6</swiper-slide>
-        <swiper-slide>Slide 6</swiper-slide>
+        <swiper-slide v-for="hotBrand in hotBrandData" :key="hotBrand.id">
+          <img :src="hotBrand.picture" alt="">
+        </swiper-slide>
       </swiper>
     </div>
   </div>
@@ -25,7 +18,13 @@
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Navigation } from 'swiper';
+import { storeToRefs } from 'pinia'
+import { useHomeStore } from '@/store/home'
+import { useLazyData } from '@/hooks/useLazyData';
 const modules = [Navigation]
+const homeStore = useHomeStore()
+const hotBrand = useLazyData(homeStore.reqHotBrandStoreData)
+const { hotBrandData } = storeToRefs(homeStore) 
 </script>
 
 <style lang="less" scoped>
@@ -61,7 +60,12 @@ const modules = [Navigation]
     .swiper-slide {
       width: 240px;
       height: 305px;
-      background-color: #27bb9a;
+
+      // background-color: #27bb9a;
+      img {
+        width: 240px;
+        height: 305px;
+      }
     }
 
     .swiper-button-prev {

@@ -1019,17 +1019,20 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted,watch } from "vue";
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { useHeaderStore } from '@/store/home'
+import { useHomeStore } from '@/store/home'
+import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
 let leftNavLoading = ref(true)
+const homeStore = useHomeStore()
 const headerStore = useHeaderStore()
 // 从store中获取头部数据和品牌数据
-let { headerData, brandData, bannerData } = storeToRefs(headerStore)
+let { brandData, bannerData } = storeToRefs(homeStore)
+let { headerData } = storeToRefs(headerStore)
 onMounted(async () => {
   // 请求获取头部数据
-  headerStore.reqBrandStoreData()
+  homeStore.reqBrandStoreData()
   // 请求获取banner数据
-  headerStore.reqBannerStoreData()
+  homeStore.reqBannerStoreData()
 })
 // 监听头部导航数据，控制左侧导航加载状态
 watch(headerData,value=>{
@@ -1053,6 +1056,7 @@ watch(headerData,value=>{
       width: 40px;
       height: 40px;
       font-size: 20px;
+      z-index: 1;
     }
 
     :deep(.el-carousel__button) {

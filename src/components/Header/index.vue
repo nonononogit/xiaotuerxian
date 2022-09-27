@@ -124,7 +124,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue"
-import { useHeaderStore } from '@/store/home'
+import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
