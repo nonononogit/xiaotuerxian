@@ -1,14 +1,7 @@
 <template>
   <!-- 主图和分类列表导航 -->
   <div class="mainBanner container">
-    <!-- 主轮播图-->
-    <div class="banner">
-      <el-carousel height="500px" trigger="click">
-        <el-carousel-item v-for="banner in bannerData" :key="banner.id">
-          <img :src="banner.imgUrl" class="bannerImg">
-        </el-carousel-item>
-      </el-carousel>
-    </div>
+    <Banner></Banner>
     <!-- 左侧导航列表 -->
     <div class="LeftNavList">
       <el-skeleton :loading="leftNavLoading" animated>
@@ -1018,21 +1011,19 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted,watch } from "vue";
-import { Swiper, SwiperSlide } from 'swiper/vue';
 import { useHomeStore } from '@/store/home'
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
+import Banner from '@/components/Banner/index.vue'
 let leftNavLoading = ref(true)
 const homeStore = useHomeStore()
 const headerStore = useHeaderStore()
-// 从store中获取头部数据和品牌数据
-let { brandData, bannerData } = storeToRefs(homeStore)
+// 从store中获取品牌数据
+let { brandData} = storeToRefs(homeStore)
 let { headerData } = storeToRefs(headerStore)
-onMounted(async () => {
-  // 请求获取头部数据
+onMounted(() => {
+  // 请求获取品牌数据
   homeStore.reqBrandStoreData()
-  // 请求获取banner数据
-  homeStore.reqBannerStoreData()
 })
 // 监听头部导航数据，控制左侧导航加载状态
 watch(headerData,value=>{

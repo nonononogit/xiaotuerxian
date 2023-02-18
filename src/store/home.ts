@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import type{BrandData,BannerData,NewGoodsData,PopularityData,HotBrandData} from '@/api/home'
+import type{BrandData,BannerData,NewGoodsData,PopularityData,HotBrandData,FloorData,SpecialData} from '@/api/home'
 import homeApi from '@/api/home'
 import { ElMessage } from 'element-plus'
 
@@ -9,7 +9,9 @@ type HomeStoreStateData={
   bannerData:BannerData,
   newGoodsData:NewGoodsData,
   popularityData:PopularityData,
-  hotBrandData:HotBrandData
+  hotBrandData:HotBrandData,
+  floorData:FloorData,
+  specialData:SpecialData
 }
 // 定义Home的store
 export const useHomeStore = defineStore('home',{
@@ -19,7 +21,9 @@ export const useHomeStore = defineStore('home',{
       bannerData:[],
       newGoodsData:[],
       popularityData:[],
-      hotBrandData:[]
+      hotBrandData:[],
+      floorData:[],
+      specialData:[]
     }
   },
   actions:{
@@ -66,6 +70,24 @@ export const useHomeStore = defineStore('home',{
         this.hotBrandData = result
       } catch (error) {
         ElMessage.error('请求获取热门品牌数据失败')
+      }
+    },
+    // 请求楼层数据
+    async reqFloorStoreData(){
+      try {
+        const result = await homeApi.reqFloorData()
+        this.floorData = result
+      } catch (error) {
+        ElMessage.error('请求楼层数据失败')
+      }
+    },
+    // 请求最新专题数据
+    async reqSpecialStoreData(){
+      try {
+        const result = await homeApi.reqSpecialData()
+        this.specialData = result
+      } catch (error) {
+        ElMessage.error('请求最新专题数据失败')
       }
     }
   }

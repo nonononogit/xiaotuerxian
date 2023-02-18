@@ -38,8 +38,10 @@
           </template>
           <template #default>
             <ul class="middleNav">
-              <li><a href="javascript:;">首页</a></li>
-              <li v-for="nav in headerData" :key="nav.id">
+              <li>
+                <router-link to="/home">首页</router-link>
+              </li>
+              <li v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
                 <a href="javascript:;">{{nav.name}}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
@@ -47,21 +49,6 @@
                       <p>{{navChildren.name}}</p>
                     </a>
                   </li>
-                  <!-- <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li>
-              <li>
-                <a href="javascript:;"><img src="./images/product1.png" />
-                  <p>茶咖酒具</p>
-                </a>
-              </li> -->
                 </ul>
               </li>
             </ul>
@@ -100,7 +87,7 @@
           <template #default>
             <ul>
               <li><a href="javascript:;">首页</a></li>
-              <li v-for="nav in headerData" :key="nav.id">
+              <li v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
                 <a href="javascript:;">{{nav.name}}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
@@ -123,9 +110,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue"
+import { ref, onMounted} from "vue"
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import {HeaderListData} from '@/api/home'
+const router = useRouter()
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
 // 控制头部导航加载状态的参考值
@@ -136,7 +126,6 @@ const getScollTop = () => {
   isHidden.value = top > 80 ? false : true
 }
 window.addEventListener('scroll', getScollTop)
-
 const headerStore = useHeaderStore()
 // 从store中获取headerData
 let { headerData } = storeToRefs(headerStore)
@@ -146,6 +135,14 @@ onMounted(async () => {
   // 控制头部导航加载状态
   mainNavLoading.value = false
 })
+const toCategory = (id:string)=>{
+  router.push({
+    name:'category',
+    params:{
+      id
+    }
+  })
+}
 </script>
 
 <style lang="less" scoped>

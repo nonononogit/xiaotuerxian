@@ -76,10 +76,13 @@
 </script>
 
 <style lang="less" scoped>
+footer{
+  padding-top: 20px;
+}
 // 底部-上半部分
 .footerTop {
   background-color: #fff;
-  margin-top: 40px;
+  // margin-top: 40px;
 
   ul {
     display: flex;

@@ -14,7 +14,7 @@ export interface goodsListData {
   discount: null,
   id: string,
   name: string,
-  orderNum: null,
+  orderNum: null | number,
   picture: string,
   price: string
 }
@@ -42,9 +42,8 @@ export interface PopularityListData {
   id: string,
   picture: string,
   title: string,
-
 }
-// 定义Brand的数据类型
+// 定义hotBrandList的数据类型
 export interface HotBrandListData {
   desc: string,
   id: string,
@@ -54,6 +53,39 @@ export interface HotBrandListData {
   picture: string,
   place: string,
   type: null
+}
+// 定义FloorListData的数据类型
+export interface FloorListData {
+  children: FloorChildrenData
+  goods: goodsData
+  id: string,
+  name: string,
+  picture: string,
+  saleInfo: string
+}
+// 定义Floor里的childrenList的数据类型
+export interface FloorChildrenListData {
+  id: string,
+  layer: number,
+  name: string,
+  parent: null
+}
+// 定义specialList的数据类型
+export interface SpecialListData {
+  classificationId: string,
+  collectNum: number,
+  cover: string,
+  createTime: string,
+  creator: string,
+  detailsUrl: string,
+  id: string,
+  isDelete: number,
+  lowestPrice: number,
+  replyNum: number,
+  summary: string,
+  title: string,
+  updateTime: string,
+  viewNum: number
 }
 // 定义请求回来的header数据类型
 export type HeaderData = HeaderListData[]
@@ -68,6 +100,11 @@ export type NewGoodsData = goodsListData[]
 export type PopularityData = PopularityListData[]
 // 定义请求回来的热门品牌数据类型
 export type HotBrandData = HotBrandListData[]
+// 定义请求回来的楼层数据类型
+export type FloorData = FloorListData[]
+export type FloorChildrenData = FloorChildrenListData[]
+// 定义请求回来的最新专题数据类型
+export type SpecialData = SpecialListData[]
 export default {
   // 请求header数据
   reqHeaderData() {
@@ -90,7 +127,15 @@ export default {
     return request.get<any, PopularityData>('/home/hot')
   },
   // 请求热门品牌数据
-  reqHotBrandData(){
-    return request.get<any,HotBrandData>('/home/brand?limit=10')
+  reqHotBrandData() {
+    return request.get<any, HotBrandData>('/home/brand?limit=10')
+  },
+  // 请求楼层数据
+  reqFloorData() {
+    return request.get<any, FloorData>('/home/goods')
+  },
+  // 请求最新专题数据
+  reqSpecialData(){
+    return request.get<any,SpecialData>('/home/special')
   }
 }

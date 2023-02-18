@@ -9,7 +9,7 @@ interface ResponseData<T> {
 }
 const instance = axios.create({
   baseURL: '/api',
-  timeout: 3000
+  timeout: 20000
 })
 instance.interceptors.request.use(config => {
   NProgress.start()

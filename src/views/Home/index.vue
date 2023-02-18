@@ -11,6 +11,7 @@ import NewGoods from './NewGoods/index.vue'
 import HotBrand from './HotBrand/index.vue'
 import Floor from './Floor/index.vue'
 import NewSpecial from './NewSpecial/index.vue'
+
 </script>
 <style lang="less" scoped>
 

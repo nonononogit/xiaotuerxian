@@ -1,130 +1,31 @@
 <template>
   <!-- 楼层 -->
-  <div class="floor">
+  <div class="floor" ref="floor">
     <div class="container">
-      <div class="floorItem">
+      <div class="floorItem" v-for="floor in floorData" :key="floor.id">
         <h2>
-          居家
+          {{floor.name}}
           <ul>
-            <li><a href="javascript:;">茶咖酒具</a></li>
-            <li><a href="javascript:;">茶咖酒具</a></li>
-            <li><a href="javascript:;">茶咖酒具</a></li>
-            <li><a href="javascript:;">茶咖酒具</a></li>
+            <li v-for="children in floor.children" :key="children.id">
+              <a href="javascript:;">{{children.name}}</a>
+            </li>
           </ul>
           <a href="javascript">查看全部<i class="iconfont iconxiangyoujiantou"></i></a>
         </h2>
         <div class="floorItemBottomContainer">
           <a href="javascript:;" class="floorItemLeft">
-            <img src="" alt="">
-            <span>居家馆</span>
-            <span>3折起狂欢</span>
+            <img :src="floor.picture" alt="">
+            <span>{{floor.name}}馆</span>
+            <span>{{floor.saleInfo}}</span>
           </a>
           <ul class="floorItemRight">
-            <li>
+            <li v-for="goods in floor.goods" :key="goods.id">
               <a href="javascript:;" class="topImg">
-                <img src="" alt="">
+                <img :src="goods.picture" alt="">
               </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
-              <div class="hide">
-                <a>
-                  <p>找相似</p>
-                  <p>发现更多宝贝 ></p>
-                </a>
-              </div>
-            </li>
-            <li>
-              <a href="javascript:;" class="topImg">
-                <img src="" alt="">
-              </a>
-              <p>手工吹制更厚实白酒杯壶套装6壶6杯</p>
-              <p>抿一口好酒，喝出真性情喝出真性情</p>
-              <p>￥99.00</p>
+              <p>{{goods.name}}</p>
+              <p>{{goods.desc}}</p>
+              <p>￥{{goods.price}}</p>
               <div class="hide">
                 <a>
                   <p>找相似</p>
@@ -140,7 +41,12 @@
 </template>
 
 <script setup lang="ts">
-
+import { useLazyData } from '@/hooks/useLazyData';
+import { storeToRefs } from 'pinia'
+import { useHomeStore } from '@/store/home'
+const homeStore = useHomeStore()
+const floor = useLazyData(homeStore.reqFloorStoreData)
+const { floorData } = storeToRefs(homeStore)
 </script>
 
 <style lang="less" scoped>
@@ -210,6 +116,7 @@
         img {
           width: 240px;
           height: 610px;
+          object-fit: cover;
         }
 
         span {

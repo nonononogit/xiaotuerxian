@@ -1,49 +1,25 @@
 <template>
   <!-- 最新专题 -->
   <div class="container">
-    <div class="newSpecial">
+    <div class="newSpecial" ref="newSpecial">
       <h3 class="title">
         最新专题
         <a href="javascript:;">查看全部 ></a>
       </h3>
       <ul class="specialList">
-        <li>
+        <li v-for="special in specialData" :key="special.id">
           <a href="javascript:;">
-            <img src="" alt="">
-            <p>地表最强 男士鹅绒毛领经鹅绒毛领</p>
-            <p>很好，很暖和。冬天穿就再也不怕冷啦</p>
-            <p>￥1299起</p>
+            <img :src="special.detailsUrl" alt="">
+            <div class="describe">
+              <p>{{special.title}}</p>
+              <p>{{special.summary}}</p>
+              <p>￥{{special.lowestPrice}}起</p>
+            </div>
           </a>
           <div class="interact">
-            <span><i class="iconfont iconaixin"></i>5902</span>
-            <span><i class="iconfont iconliulan"></i>5902</span>
-            <span><i class="iconfont iconpinglun"></i>5902</span>
-          </div>
-        </li>
-        <li>
-          <a href="javascript:;">
-            <img src="" alt="">
-            <p>地表最强 男士鹅绒毛领经鹅绒毛领</p>
-            <p>很好，很暖和。冬天穿就再也不怕冷啦</p>
-            <p>￥1299起</p>
-          </a>
-          <div class="interact">
-            <span><i class="iconfont iconaixin"></i>5902</span>
-            <span><i class="iconfont iconliulan"></i>5902</span>
-            <span><i class="iconfont iconpinglun"></i>5902</span>
-          </div>
-        </li>
-        <li>
-          <a href="javascript:;">
-            <img src="" alt="">
-            <p>地表最强 男士鹅绒毛领经鹅绒毛领</p>
-            <p>很好，很暖和。冬天穿就再也不怕冷啦</p>
-            <p>￥1299起</p>
-          </a>
-          <div class="interact">
-            <span><i class="iconfont iconaixin"></i>5902</span>
-            <span><i class="iconfont iconliulan"></i>5902</span>
-            <span><i class="iconfont iconpinglun"></i>5902</span>
+            <span><i class="iconfont iconaixin"></i>{{special.collectNum}}</span>
+            <span><i class="iconfont iconliulan"></i>{{special.viewNum}}</span>
+            <span><i class="iconfont iconpinglun"></i>{{special.replyNum}}</span>
           </div>
         </li>
       </ul>
@@ -52,12 +28,18 @@
 </template>
 
 <script setup lang="ts">
-
+import { useLazyData } from '@/hooks/useLazyData';
+import { useHomeStore } from '@/store/home';
+import { storeToRefs } from 'pinia'
+const homeStore = useHomeStore()
+const newSpecial = useLazyData(homeStore.reqSpecialStoreData)
+const { specialData } = storeToRefs(homeStore)
 </script>
 
 <style lang="less" scoped>
 // 最新专题
 .newSpecial {
+  margin-bottom: 20px;
   .title {
     display: flex;
     justify-content: space-between;
@@ -92,40 +74,50 @@
         img {
           width: 404px;
           height: 288px;
+          object-fit: cover;
         }
 
-        p {
+        .describe {
           position: absolute;
-          left: 15px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          width: 266.8px;
+          top: 0;
+          width: 100%;
+          height: 288px;
+          background-image: linear-gradient(0deg, rgba(0, 0, 0, .8), transparent 50%);
+
+          p {
+            position: absolute;
+            left: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 266.8px;
+          }
+
+          p:nth-child(1) {
+            bottom: 40px;
+            font-size: 22px;
+            color: #fff;
+          }
+
+          p:nth-child(2) {
+            bottom: 15px;
+            font-size: 19px;
+            color: #999;
+          }
+
+          P:nth-child(3) {
+            left: 300px;
+            bottom: 34px;
+            width: 81.85px;
+            background-color: #fff;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 25px;
+            color: #cf4444;
+            font-size: 17px;
+          }
         }
 
-        p:nth-child(2) {
-          bottom: 40px;
-          font-size: 22px;
-          color: #fff;
-        }
-
-        p:nth-child(3) {
-          bottom: 15px;
-          font-size: 19px;
-          color: #999;
-        }
-
-        P:nth-child(4) {
-          left: 300px;
-          bottom: 34px;
-          width: 81.85px;
-          background-color: #fff;
-          border-radius: 4px;
-          text-align: center;
-          line-height: 25px;
-          color: #cf4444;
-          font-size: 17px;
-        }
       }
 
       .interact {
