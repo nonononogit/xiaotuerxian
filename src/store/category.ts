@@ -73,16 +73,15 @@ export const useCategoryStore = defineStore('category', {
     async reqTemporaryStoreData(reqTemporaryParams: ReqTemporaryParams) {
       try {
         const result = await categoryApi.reqTemporaryData(reqTemporaryParams)
-        if (!result.items.length) {
-          return 'done'
-        }
+        // 如果是筛选，则先清空前次的数据，然后再添加
         if ((reqTemporaryParams.sortField || reqTemporaryParams.inventory || reqTemporaryParams.onlyDiscount) && reqTemporaryParams.page === 1) {
           this.temporaryData.items = []
-          this.temporaryData.items.push(...result.items)
+            this.temporaryData.items.push(...result.items)
         } else {
-          this.temporaryData.items.push(...result.items)
+            this.temporaryData.items.push(...result.items)
         }
-        return 'ok'
+        // 将结果长度返回给组件，方便组件判断停止滚动请求数据
+        return result.items.length
       } catch (error) {
         ElMessage.error('请求获取Temporary数据失败')
       }

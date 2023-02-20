@@ -29,7 +29,7 @@
       </div>
     </div>
     <ul class="category-list" v-infinite-scroll="temporaryLoad" :infinite-scroll-disabled="stopRequestTemporary"
-      :infinite-scroll-delay="1000">
+      >
       <li v-for="goods in temporaryData.items" :key="goods.id" ref="target" v-loading="loading">
         <a href="javascript:;">
           <img :src="goods.picture" alt="">
@@ -39,7 +39,7 @@
         </a>
       </li>
     </ul>
-    <div class="none" v-if="stopRequestTemporary">
+    <div class="none" v-if="!state">
       <span class="img"></span>
       <span class="text">亲, 没有更多了</span>
     </div>
@@ -55,7 +55,10 @@ import { ReqTemporaryParams } from '@/api/category'
 const route = useRoute()
 const category2Id = ref('')
 const categoryStore = useCategoryStore()
+// 控制加载中的状态
 let loading = ref(false)
+// 定义参考值，作用一：接收store中传来的请求的商品列表长度；作用二：控制没有更多商品的展示
+let state = ref(1)
 const { temporaryData } = storeToRefs(categoryStore)
 // 方式二：从其他页面跳转到分类页时先发一次请求
 onMounted(() => {
@@ -80,8 +83,10 @@ let reqTemporaryParams: ReqTemporaryParams = reactive({
 const temporaryLoad = async () => {
   ++page.value
   loading.value = true
-  const state = await categoryStore.reqTemporaryStoreData(reqTemporaryParams)
-  if(state === 'done'){
+  // 接收store中请求结束传来的返回数据的长度
+  state.value = await categoryStore.reqTemporaryStoreData(reqTemporaryParams) as number
+  // 如果没有返回数据了，则停止滚动请求
+  if(!state.value){
     stopRequestTemporary.value = true
     loading.value = false
   }else{
