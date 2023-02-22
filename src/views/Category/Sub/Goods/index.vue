@@ -47,14 +47,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive,getCurrentInstance } from 'vue';
 import { useRoute } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
-import { ReqTemporaryParams } from '@/api/category'
+import { AttrsParams, ReqTemporaryParams } from '@/api/category'
 const route = useRoute()
 const category2Id = ref('')
 const categoryStore = useCategoryStore()
+const instance = getCurrentInstance()
+instance?.proxy?.$Bus.on('attr',(attrs)=>{
+  reqTemporaryParams.attrs = attrs as AttrsParams[]
+  categoryStore.reqTemporaryStoreData(reqTemporaryParams)
+})
 // 控制加载中的状态
 let loading = ref(false)
 // 定义参考值，作用一：接收store中传来的请求的商品列表长度；作用二：控制没有更多商品的展示
@@ -78,6 +83,7 @@ let reqTemporaryParams: ReqTemporaryParams = reactive({
   pageSize: 20,
   sortField: null,
   sortMethod: null,
+  attrs:[]
 })
 // 滚动加载的方法
 const temporaryLoad = async () => {

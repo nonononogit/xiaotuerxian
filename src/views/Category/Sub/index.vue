@@ -12,14 +12,19 @@
   <Attr></Attr>
   <Goods></Goods>
 </template>
-
-<script setup lang="ts">
+<script lang="ts">
 import Attr from './Attr/index.vue'
 import Goods from './Goods/index.vue'
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, defineComponent } from 'vue';
 import { useRoute, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useCategoryStore, } from '@/store/category'
 import { storeToRefs } from 'pinia'
+export default defineComponent({
+  name:'Sub-Goods'
+})
+</script>
+
+<script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
 const category2Id = ref('')

@@ -56,11 +56,13 @@ export interface SubSalePropertiesData {
   id: string
   name: string
   properties: SalePropertiesItemListData
+  select?:string
 }
 // 定义category2级数据里的saleProperties数据里的properties数据
 export interface SalePropertiesItemData {
   id: string
   name: string
+  select?:string
 }
 export type SalePropertiesItemListData = SalePropertiesItemData[]
 export type SubSalePropertiesListData = SubSalePropertiesData[]
@@ -82,6 +84,11 @@ export interface ReqTemporaryParams {
   onlyDiscount?:boolean
   sortField?:null|string
   sortMethod?:null|string
+  attrs?:AttrsParams[]
+}
+export interface AttrsParams{
+  groupName:string
+  propertyName:string
 }
 export default {
   reqCategoryData(categoryId: string) {
