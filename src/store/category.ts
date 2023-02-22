@@ -65,6 +65,10 @@ export const useCategoryStore = defineStore('category', {
       try {
         const result = await categoryApi.reqCategorySubData(categoryId)
         this.categorySubData = result
+        // 给销售属性类添加选择的参考值
+        this.categorySubData.saleProperties.forEach(item=>{
+          item.select = '1'
+        })
       } catch (error) {
         ElMessage.error('请求获取Sub分类数据失败')
       }
