@@ -5,7 +5,6 @@
         {{ saleProperties.name }}:
       </div>
       <div class="middle-all">
-        <!--  -->
         <a href="javascript:;" :class="{ active: saleProperties.select === '1' }"
           @click="selectAll(saleProperties)">全部</a>
       </div>
