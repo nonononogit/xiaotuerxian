@@ -42,11 +42,11 @@
                 <router-link to="/home">首页</router-link>
               </li>
               <li v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
-                <a href="javascript:;">{{nav.name}}</a>
+                <a href="javascript:;">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
                     <a href="javascript:;"><img :src="navChildren.picture" />
-                      <p>{{navChildren.name}}</p>
+                      <p>{{ navChildren.name }}</p>
                     </a>
                   </li>
                 </ul>
@@ -66,33 +66,33 @@
       </div>
     </div>
     <!-- 滚动显示的固定导航 -->
-    <div class="fixedNav" :class="{fixedNavActive:isHidden}">
+    <div class="fixedNav" :class="{ fixedNavActive: isHidden }">
       <div class="container">
         <a href="javascript:;" class="logo"></a>
         <el-skeleton :loading="mainNavLoading" class="fixed-nav-skeleton">
           <template #template>
             <ul class="middleNav">
-              <li><a href="javascript:;">首页</a></li>
-              <li><a href="javascript:;">居家</a></li>
-              <li><a href="javascript:;">美食</a></li>
-              <li><a href="javascript:;">服饰</a></li>
-              <li><a href="javascript:;">母婴</a></li>
-              <li><a href="javascript:;">个护</a></li>
-              <li><a href="javascript:;">严选</a></li>
-              <li><a href="javascript:;">数码</a></li>
-              <li><a href="javascript:;">运动</a></li>
-              <li><a href="javascript:;">杂项</a></li>
+              <li class="middleNav-item"><a href="javascript:;">首页</a></li>
+              <li class="middleNav-item"><a href="javascript:;">居家</a></li>
+              <li class="middleNav-item"><a href="javascript:;">美食</a></li>
+              <li class="middleNav-item"><a href="javascript:;">服饰</a></li>
+              <li class="middleNav-item"><a href="javascript:;">母婴</a></li>
+              <li class="middleNav-item"><a href="javascript:;">个护</a></li>
+              <li class="middleNav-item"><a href="javascript:;">严选</a></li>
+              <li class="middleNav-item"><a href="javascript:;">数码</a></li>
+              <li class="middleNav-item"><a href="javascript:;">运动</a></li>
+              <li class="middleNav-item"><a href="javascript:;">杂项</a></li>
             </ul>
           </template>
           <template #default>
-            <ul>
-              <li><a href="javascript:;">首页</a></li>
-              <li v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
-                <a href="javascript:;">{{nav.name}}</a>
+            <ul class="middleNav">
+              <li class="middleNav-item"><a href="javascript:;">首页</a></li>
+              <li class="middleNav-item" v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
+                <a href="javascript:;">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
                     <a href="javascript:;"><img :src="navChildren.picture" />
-                      <p>{{navChildren.name}}</p>
+                      <p>{{ navChildren.name }}</p>
                     </a>
                   </li>
                 </ul>
@@ -110,11 +110,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted} from "vue"
+import { ref, onMounted } from "vue"
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import {HeaderListData} from '@/api/home'
+import { HeaderListData } from '@/api/home'
 const router = useRouter()
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
@@ -135,10 +135,10 @@ onMounted(async () => {
   // 控制头部导航加载状态
   mainNavLoading.value = false
 })
-const toCategory = (id:string)=>{
+const toCategory = (id: string) => {
   router.push({
-    name:'category',
-    params:{
+    name: 'category',
+    params: {
       id
     }
   })
@@ -209,7 +209,7 @@ const toCategory = (id:string)=>{
       width: 820px;
       padding: 0 20px;
 
-      &>li {
+      li {
         width: 32px;
         height: 32px;
         line-height: 32px;
@@ -253,7 +253,7 @@ const toCategory = (id:string)=>{
         }
       }
 
-      &>li:hover {
+      &>.middleNav-item:hover {
         border-bottom: 1px solid #27bb9a;
 
         .dropDownMenu {
@@ -331,7 +331,7 @@ const toCategory = (id:string)=>{
       width: 820px;
       padding-left: 40px;
 
-      li {
+      .middleNav-item {
         width: 38px;
         height: 32px;
         margin-right: 40px;
@@ -352,7 +352,7 @@ const toCategory = (id:string)=>{
           transition: height .2s .1s;
           z-index: 1;
 
-          li {
+          &>li {
             padding-top: 20px;
             width: 110px;
             text-align: center;
@@ -369,7 +369,7 @@ const toCategory = (id:string)=>{
         }
       }
 
-      li:hover {
+      .middleNav-item:hover {
         border-bottom: 1px solid #27bb9a;
 
         .dropDownMenu {
@@ -397,7 +397,8 @@ const toCategory = (id:string)=>{
     a:hover {
       color: #27bb9a;
     }
-    .fixed-nav-skeleton{
+
+    .fixed-nav-skeleton {
       display: flex;
       width: 820px;
     }
