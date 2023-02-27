@@ -20,6 +20,7 @@ export const useHeaderStore = defineStore('header',{
       try {
         const result = await headerApi.reqHeaderData()
         this.headerData = result
+        return 'ok'
       } catch (error) {
         ElMessage.error('请求获取头部数据失败')
       }

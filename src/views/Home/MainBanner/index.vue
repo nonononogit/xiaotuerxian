@@ -1010,7 +1010,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted,watch } from "vue";
+import { ref, onMounted,watch } from "vue";
 import { useHomeStore } from '@/store/home'
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'

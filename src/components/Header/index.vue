@@ -5,7 +5,7 @@
     <nav class="top">
       <div class="container">
         <ul>
-          <li><a class="first-a">请先登录</a></li>
+          <li><router-link class="first-a" to="/login">请先登录</router-link></li>
           <li><a>免费注册</a></li>
           <li><a>我的订单</a></li>
           <li><a>会员中心</a></li>
@@ -41,8 +41,8 @@
               <li>
                 <router-link to="/home">首页</router-link>
               </li>
-              <li v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
-                <a href="javascript:;">{{ nav.name }}</a>
+              <li v-for="nav in headerData" :key="nav.id" >
+                <a href="javascript:;" @click="toCategory(nav.id)">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
                     <a href="javascript:;"><img :src="navChildren.picture" />
@@ -87,7 +87,7 @@
           <template #default>
             <ul class="middleNav">
               <li class="middleNav-item"><a href="javascript:;">首页</a></li>
-              <li class="middleNav-item" v-for="nav in headerData" :key="nav.id" @click="toCategory(nav.id)">
+              <li class="middleNav-item" v-for="nav in headerData" :key="nav.id" @click.stop="toCategory(nav.id)">
                 <a href="javascript:;">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
@@ -253,7 +253,7 @@ const toCategory = (id: string) => {
         }
       }
 
-      &>.middleNav-item:hover {
+      &>li:hover {
         border-bottom: 1px solid #27bb9a;
 
         .dropDownMenu {

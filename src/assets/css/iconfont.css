@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3614143 */
-  src: url('//at.alicdn.com/t/c/font_3614143_5f2whizdihx.woff2?t=1667717091824') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3614143_5f2whizdihx.woff?t=1667717091824') format('woff'),
-       url('//at.alicdn.com/t/c/font_3614143_5f2whizdihx.ttf?t=1667717091824') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3614143_q8uol0xolx.woff2?t=1677491437175') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3614143_q8uol0xolx.woff?t=1677491437175') format('woff'),
+       url('//at.alicdn.com/t/c/font_3614143_q8uol0xolx.ttf?t=1677491437175') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,26 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon24gl-shieldCheck:before {
+  content: "\e9d4";
+}
+
+.iconjinggao:before {
+  content: "\e6b6";
+}
+
+.iconxinfeng1:before {
+  content: "\e63c";
+}
+
+.iconyonghu:before {
+  content: "\e720";
+}
+
+.iconsuoding_o:before {
+  content: "\eb50";
 }
 
 .iconweixuanze:before {

@@ -41,15 +41,22 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
+import { useHeaderStore } from '@/store/header';
 const category1Id = ref('')
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const { categoryData } = storeToRefs(categoryStore)
+const headerStore = useHeaderStore()
 // 方式一：监听路由路径
-watch(() => router.currentRoute.value.path,(newValue, oldValue) => {
+watch(() => router.currentRoute.value.path, (newValue, oldValue) => {
   if (router.currentRoute.value.name !== 'sub') {
     category1Id.value = router.currentRoute.value.params.id as string
-   categoryStore.reqCategoryStoreData(category1Id.value as string)
+    // 如果点击的去首页，category1Id为空，则重新请求分类列表的数据
+    if(!category1Id.value) {
+      headerStore.reqHeaderStoreData()
+      return
+    }
+    categoryStore.reqCategoryStoreData(category1Id.value as string)
   }
 }, { immediate: true })
 // 点击全部分类子项路由跳转sub

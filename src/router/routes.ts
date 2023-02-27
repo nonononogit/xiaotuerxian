@@ -22,6 +22,14 @@ const routes:RouteRecordRaw[] = [
     ]
   },
   {
+    path:'/login',
+    name:'login',
+    component:()=>import('@/views/Login/index.vue'),
+    meta:{
+      isHidden:true
+    }
+  },
+  {
     path:'/',
     redirect:'/home'
   }
