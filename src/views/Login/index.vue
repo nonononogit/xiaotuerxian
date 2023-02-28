@@ -8,9 +8,11 @@
         欢迎登录
       </div>
       <div class="to-home">
-        <span>进入网站首页</span>
-        <i class="iconfont iconxiangyoujiantou"></i>
-        <i class="iconfont iconxiangyoujiantou"></i>
+        <a href="javascript:;">
+          <span>进入网站首页</span>
+          <i class="iconfont iconxiangyoujiantou"></i>
+          <i class="iconfont iconxiangyoujiantou"></i>
+        </a>
       </div>
     </div>
   </header>
@@ -77,17 +79,42 @@
             <button class="submit" type="button">登录</button>
           </form>
           <div class="register-box">
-            <a class="login-qq" href="javascript:;"></a>
-            <span class="forget">忘记密码</span>
-            <span class="register">免费注册</span>
+            <a class="login-qq"
+              href="
+                      https://graph.qq.com/oauth2.0/authorize?client_id=101941968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Ferabbit.itheima.net%2F%23%2Flogin%2Fcallback">
+              <img src="../../assets/images/Connect_QQ_logo.png">
+            </a>
+            <div class="register-right">
+              <a class="forget">忘记密码</a>
+              <a class="register">免费注册</a>
+            </div>
           </div>
         </div>
       </div>
       <div class="login-QRCode">
-
+        <img src="../../assets/images/login-qrcode.jpg" alt="">
+        <p class="login-QRcode-text">
+          打开
+          <a href="javascript:;">小兔鲜App</a>
+          扫码登录
+        </p>
       </div>
     </section>
   </main>
+  <footer class="footer">
+    <div class="copyright container">
+      <div class="footer-nav">
+        <a href="javascript:;">关于我们</a>
+        <a href="javascript:;">帮助中心</a>
+        <a href="javascript:;">售后服务</a>
+        <a href="javascript:;">配送与验收</a>
+        <a href="javascript:;">商务合作</a>
+        <a href="javascript:;">搜索推荐</a>
+        <a href="javascript:;">友情链接</a>
+      </div>
+      <p>Copyright © 小兔鲜儿</p>
+    </div>
+  </footer>
 </template>
 
 <script lang="ts">
@@ -124,6 +151,10 @@
     }
 
     .to-home {
+      a{
+        color: #333;
+      }
+      
       .iconfont {
         font-size: 14px;
         color: #27ba9b;
@@ -181,6 +212,7 @@
 
     .login-form {
       padding: 0 40px;
+      display: none;
 
       .login-form-box {
         .form-action-box {
@@ -290,18 +322,87 @@
               }
             }
           }
-          .submit{
+
+          .submit {
             display: block;
             width: 100%;
             height: 40px;
+            margin-bottom: 20px;
             color: #fff;
             line-height: 40px;
             background-color: #27ba9b;
             border: none;
           }
         }
+
+        .register-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .register-right {
+            font-size: 14px;
+
+            .forget,
+            .register {
+              color: #999;
+            }
+
+            .forget {
+              margin-right: 5px;
+            }
+          }
+        }
+      }
+    }
+
+    .login-QRCode {
+      margin-top: 40px;
+      text-align: center;
+
+      .login-QRcode-text {
+        margin-top: 20px;
+        font-size: 14px;
+
+        a {
+          font-size: 16px;
+          color: #27ba9b;
+        }
       }
     }
   }
 }
-</style>
+
+.footer {
+  background-color: white;
+
+  .copyright {
+    height: 170px;
+    padding-top: 40px;
+
+    .footer-nav {
+      text-align: center;
+
+      a {
+        display: inline-block;
+        font-size: 14px;
+        line-height: 1;
+        padding: 0 10px;
+        color: #999999;
+        border-right: 1px solid #ccc;
+      }
+
+      a:last-child {
+        border: none;
+      }
+    }
+
+    p {
+
+      font-size: 14px;
+      margin-top: 20px;
+      color: #999;
+      text-align: center;
+    }
+  }
+}</style>
