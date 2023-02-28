@@ -57,7 +57,7 @@
         <div class="copyright">
           <ul>
             <li><a href="javascript:;">关于我们</a></li>
-            <li><a href="javascript:;">关注中心</a></li>
+            <li><a href="javascript:;">帮助中心</a></li>
             <li><a href="javascript:;">售后服务</a></li>
             <li><a href="javascript:;">配送与验收</a></li>
             <li><a href="javascript:;">商务合作</a></li>
