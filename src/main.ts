@@ -7,7 +7,6 @@ import App from './App.vue'
 import router from './router'
 import pinia from './store'
 
-
 import mitt from 'mitt'
 const Mit = mitt()
 //TypeScript注册

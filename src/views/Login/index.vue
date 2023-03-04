@@ -1,87 +1,82 @@
 <template>
-  <header class="header-login">
-    <div class="container">
-      <div class="logo-box">
-        <a class="logo-item"></a>
-      </div>
-      <div class="login-welcome">
-        欢迎登录
-      </div>
-      <div class="to-home">
-        <a href="javascript:;">
-          <span>进入网站首页</span>
-          <i class="iconfont iconxiangyoujiantou"></i>
-          <i class="iconfont iconxiangyoujiantou"></i>
-        </a>
-      </div>
-    </div>
-  </header>
+  <LoginHeader></LoginHeader>
   <main class="main-login">
     <section class="section-login">
       <div class="login-action">
-        <a class="account-text action" href="javascript:;">账户登录</a>
-        <a class="QRCode-text" href="javascript:;">扫码登录</a>
+        <a class="account-text" :class="{ action: loginAction === 'form' }" href="javascript:;"
+          @click="loginAction = 'form'">账户登录</a>
+        <a class="QRCode-text" :class="{ action: loginAction === 'QRCode' }" href="javascript:;"
+          @click="loginAction = 'QRCode'">扫码登录</a>
       </div>
-      <div class="login-form">
+      <div class="login-form" v-show="loginAction === 'form'">
         <div class="login-form-box">
           <div class="form-action-box">
-            <a class="form-action-account" href="javascript"><i class="iconfont iconyonghu"></i>使用账号登录</a>
-            <a class="form-action-message" href="javascript"><i class="iconfont iconxinfeng1"></i>使用短信登录</a>
+            <a v-if="formLogin" class="form-action-message" href="javascript:;" @click="formLogin = false"><i
+                class="iconfont iconxinfeng1"></i>使用短信登录</a>
+            <a v-else class="form-action-account" href="javascript:;" @click="formLogin = true"><i
+                class="iconfont iconyonghu"></i>使用账号登录</a>
           </div>
-          <form action="" class="form">
-            <div class="account-box">
-              <i class="iconfont iconyonghu"></i>
-              <input type="text" placeholder="请输入用户名">
-              <div class="error-box">
-                <i class="iconfont iconjinggao"></i>
-                <span>请输入用户名</span>
+          <Form ref="formDom" class="form" :validation-schema="schema" v-slot="{ errors }" autocomplete="off">
+            <template v-if="formLogin">
+              <div class="account-box">
+                <i class="iconfont iconyonghu"></i>
+                <Field :class="{ error: errors.account }" name="account" type="text" placeholder="请输入用户名"
+                  v-model="form.account" />
+                <div class="error-box" v-show="errors.account">
+                  <i class="iconfont iconjinggao"></i>
+                  <span>{{ errors.account }}</span>
+                </div>
               </div>
-            </div>
-            <div class="password-box">
-              <i class="iconfont iconsuoding_o"></i>
-              <input type="password" placeholder="请输入密码">
-              <div class="error-box">
-                <i class="iconfont iconjinggao"></i>
-                <span>请输入密码</span>
+              <div class="password-box">
+                <i class="iconfont iconsuoding_o"></i>
+                <Field :class="{ error: errors.password }" name="password" type="password" placeholder="请输入密码"
+                  v-model="form.password" />
+                <div class="error-box" v-show="errors.password">
+                  <i class="iconfont iconjinggao"></i>
+                  <span>{{ errors.password }}</span>
+                </div>
               </div>
-            </div>
-            <div class="phone-box">
-              <i class="iconfont iconshouji"></i>
-              <input type="text" placeholder="请输入手机号">
-              <div class="error-box">
-                <i class="iconfont iconjinggao"></i>
-                <span>请输入手机号</span>
+            </template >
+            <template  v-else>
+              <div class="phone-box">
+                <i class="iconfont iconshouji"></i>
+                <Field :class="{ error: errors.mobile }" name="mobile" type="text" placeholder="请输入手机号"
+                  v-model="form.mobile" />
+                <div class="error-box" v-show="errors.mobile">
+                  <i class="iconfont iconjinggao"></i>
+                  <span>{{ errors.mobile }}</span>
+                </div>
               </div>
-            </div>
-            <div class="verification-box">
-              <i class="iconfont icon24gl-shieldCheck"></i>
-              <input type="text" placeholder="请输入验证码">
-              <div class="error-box">
-                <i class="iconfont iconjinggao"></i>
-                <span>请输入验证码</span>
+              <div class="verification-box">
+                <i class="iconfont icon24gl-shieldCheck"></i>
+                <Field :class="{ error: errors.code }" name="code" type="text" placeholder="请输入验证码" v-model="form.code" />
+                <a class="send-verification" href="javascript:;">发送验证码</a>
+                <div class="error-box" v-show="errors.code">
+                  <i class="iconfont iconjinggao"></i>
+                  <span>{{ errors.code }}</span>
+                </div>
               </div>
-            </div>
+            </template>
             <div class="terms-box">
               <div class="terms-content">
-                <i class="iconfont iconweixuanze"></i>
-                <i class="iconfont iconyixuanze"></i>
+                <i v-if="checkedTerms" class="iconfont iconyixuanze" @click="checkedTerms = false"></i>
+                <i v-else class="iconfont iconweixuanze" @click="checkedTerms = true"></i>
                 <span>我已同意</span>
                 <a href="javascript:;">《隐私条款》</a>
                 <span>和</span>
                 <a href="javascript:;">《服务条款》</a>
               </div>
-              <div class="error-box">
+              <div class="error-box" v-show="!checkedTerms">
                 <i class="iconfont iconjinggao"></i>
                 <span>请勾选登录协议</span>
               </div>
             </div>
             <!-- 声明按钮为button类型，避免form默认事件 -->
-            <button class="submit" type="button">登录</button>
-          </form>
+            <button class="submit" type="button" @click="login">登录</button>
+          </Form>
           <div class="register-box">
             <a class="login-qq"
-              href="
-                      https://graph.qq.com/oauth2.0/authorize?client_id=101941968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Ferabbit.itheima.net%2F%23%2Flogin%2Fcallback">
+              href="https://graph.qq.com/oauth2.0/authorize?client_id=101941968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Ferabbit.itheima.net%2F%23%2Flogin%2Fcallback">
               <img src="../../assets/images/Connect_QQ_logo.png">
             </a>
             <div class="register-right">
@@ -91,7 +86,7 @@
           </div>
         </div>
       </div>
-      <div class="login-QRCode">
+      <div class="login-QRCode" v-show="loginAction === 'QRCode'">
         <img src="../../assets/images/login-qrcode.jpg" alt="">
         <p class="login-QRcode-text">
           打开
@@ -101,69 +96,53 @@
       </div>
     </section>
   </main>
-  <footer class="footer">
-    <div class="copyright container">
-      <div class="footer-nav">
-        <a href="javascript:;">关于我们</a>
-        <a href="javascript:;">帮助中心</a>
-        <a href="javascript:;">售后服务</a>
-        <a href="javascript:;">配送与验收</a>
-        <a href="javascript:;">商务合作</a>
-        <a href="javascript:;">搜索推荐</a>
-        <a href="javascript:;">友情链接</a>
-      </div>
-      <p>Copyright © 小兔鲜儿</p>
-    </div>
-  </footer>
+  <LoginFooter></LoginFooter>
 </template>
 
 <script lang="ts">
-
+import { ref, watch } from 'vue';
+import { Form, Field } from 'vee-validate'
+import schema from '@/utils/vee-validate-schema'
+import { userStore } from '@/store/userInfo'
+import LoginHeader from '@/views/Login/components/LoginHeader/index.vue'
+import LoginFooter from '@/views/Login/components/LoginFooter/index.vue'
 </script>
 <script setup lang="ts">
-
+// 控制账户登录或者扫码登录
+let loginAction = ref('form')
+// 控制账号登录或短信登录
+let formLogin = ref(true)
+// 检查是否勾选协议
+let checkedTerms = ref(true)
+let form = ref({
+  account: '',
+  password: '',
+  mobile: '',
+  code: '',
+})
+const userInfo = userStore()
+const formDom = ref<HTMLFormElement>()
+// 监视切换登录方式，情况表单内容和验证状态
+watch(formLogin, async () => {
+  form.value = {
+    account: '',
+    password: '',
+    mobile: '',
+    code: '',
+  }
+  formDom.value!.resetForm()
+})
+// 登录
+const login = async () => {
+  const validate = await formDom.value!.validate()
+  if (validate.results.account.valid && validate.results.password.valid) {
+    const { account, password } = form.value
+    userInfo.getUserInfo({ account, password })
+  }
+}
 </script>
 
 <style lang="less" scoped>
-.header-login {
-  background-color: white;
-
-  .container {
-    display: flex;
-    align-items: center;
-
-    .logo-box {
-      width: 200px;
-
-      .logo-item {
-        display: block;
-        width: 100%;
-        height: 132px;
-        background: url(@/assets/images/logo.png) no-repeat center 18px/contain;
-      }
-    }
-
-    .login-welcome {
-      flex: 1;
-      margin-left: 20px;
-      font-size: 24px;
-      color: #666;
-    }
-
-    .to-home {
-      a{
-        color: #333;
-      }
-      
-      .iconfont {
-        font-size: 14px;
-        color: #27ba9b;
-        letter-spacing: -5px; // 减少字符间距
-      }
-    }
-  }
-}
-
 .main-login {
   position: relative;
   height: 488px;
@@ -193,6 +172,7 @@
         font-size: 18px;
         line-height: 1;
         color: #333;
+        transition: none;
       }
 
       .account-text {
@@ -212,7 +192,6 @@
 
     .login-form {
       padding: 0 40px;
-      display: none;
 
       .login-form-box {
         .form-action-box {
@@ -231,13 +210,6 @@
           .iconfont {
             padding: 2px 2px 0 0;
           }
-
-          // .form-action-message{
-          //   display: none;
-          // }
-          .form-action-account {
-            display: none;
-          }
         }
 
         .form {
@@ -249,12 +221,13 @@
             position: relative;
             width: 300px;
             height: 36px;
-            border: 1px solid #cfcdcd;
+            // border: 1px solid #cfcdcd;
             margin-bottom: 28px;
 
             &>i {
               position: absolute;
-              left: 0;
+              top: 1px;
+              left: 1px;
               display: inline-block;
               width: 34px;
               height: 34px;
@@ -270,20 +243,41 @@
               width: 100%;
               height: 100%;
               padding-left: 45px;
-              border: none;
+              border: 1px solid #cfcdcd;
               outline: none;
               font-size: 14px;
+
+              &.error {
+                border-color: #cf4444;
+              }
+
+              &:focus {
+                border-color: #27ba9b;
+              }
             }
 
             input::placeholder {
               color: #cfcdcd;
             }
+
           }
 
-
-          .phone-box,
           .verification-box {
-            display: none;
+            position: relative;
+
+            .send-verification {
+              position: absolute;
+              top: 1px;
+              right: 1px;
+              display: inline-block;
+              height: 34px;
+              width: 90px;
+              line-height: 34px;
+              color: #666;
+              background-color: #f5f5f5;
+              text-align: center;
+              font-size: 14px;
+            }
           }
 
           .error-box {
@@ -302,15 +296,15 @@
           }
 
           .terms-box {
-
+            height: 46px;
 
             .terms-content {
               display: flex;
               font-size: 14px;
 
               i {
-                margin-right: 3px;
                 padding-top: 2px;
+                margin-right: 2px;
               }
 
               .iconyixuanze {
@@ -333,6 +327,12 @@
             background-color: #27ba9b;
             border: none;
           }
+
+          .focusAction {
+            border: 1px #27ba9b solid;
+          }
+
+
         }
 
         .register-box {
@@ -373,36 +373,4 @@
   }
 }
 
-.footer {
-  background-color: white;
-
-  .copyright {
-    height: 170px;
-    padding-top: 40px;
-
-    .footer-nav {
-      text-align: center;
-
-      a {
-        display: inline-block;
-        font-size: 14px;
-        line-height: 1;
-        padding: 0 10px;
-        color: #999999;
-        border-right: 1px solid #ccc;
-      }
-
-      a:last-child {
-        border: none;
-      }
-    }
-
-    p {
-
-      font-size: 14px;
-      margin-top: 20px;
-      color: #999;
-      text-align: center;
-    }
-  }
-}</style>
+</style>
