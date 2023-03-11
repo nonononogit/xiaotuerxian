@@ -7,40 +7,41 @@ export interface CategoryData {
   name: string,
   picture: null | string
 }
-// 定义category1级数据里children数据
+// 定义category1级数据里children数据和category2级数据
 export interface CategoryChildrenList {
-  brands: null | string
-  categories: null | string
+  brands: null | SubBrandsListData
+  categories: null | SubCategoriesListData
   goods: goodsData
   id: string
   name: string
   parentId: null | string
   parentName: null | string
-  picture: string
+  picture: null | string
+  saleProperties?:SubSalePropertiesListData
 }
 export type CategoryChildrenData = CategoryChildrenList[]
 // 定义category2级数据
-export interface CategorySubData {
-  brands: SubBrandsListData
-  categories: SubCategoriesListData
-  goods: goodsData
-  id: string
-  name: string
-  parentId: string
-  parentName: string
-  picture: null | string
-  saleProperties: SubSalePropertiesListData
-}
+// export interface CategorySubData {
+//   brands: SubBrandsListData
+//   categories: SubCategoriesListData
+//   goods: goodsData
+//   id: string
+//   name: string
+//   parentId: string
+//   parentName: string
+//   picture: null | string
+//   saleProperties: SubSalePropertiesListData
+// }
 // 定义category2级数据里的brands数据
 export interface SubBrandsData {
-  desc: string
+  desc: string | null
   id: string
-  logo: string
+  logo: string | null
   name: string
   nameEn: string
-  picture: string
-  place: string
-  type: null
+  picture: string | null
+  place: string | null
+  type: string | null
 }
 export type SubBrandsListData = SubBrandsData[]
 // 定义category2级数据里的categories数据
@@ -48,7 +49,7 @@ export interface SubCategoriesData {
   id: string
   layer: number
   name: string
-  parent: null
+  parent: null | SubCategoriesData
 }
 export type SubCategoriesListData = SubCategoriesData[]
 // 定义category2级数据里的saleProperties数据
@@ -95,7 +96,7 @@ export default {
     return request.get<any, CategoryData>('/category', { params: { id: categoryId } })
   },
   reqCategorySubData(categoryId: string) {
-    return request.get<any, CategorySubData>('/category/sub/filter?id=' + categoryId)
+    return request.get<any, CategoryChildrenList>('/category/sub/filter?id=' + categoryId)
   },
   reqTemporaryData(reqTemporaryParams:ReqTemporaryParams) {
     return request.post<any,TemporaryData>('/category/goods/temporary',reqTemporaryParams)

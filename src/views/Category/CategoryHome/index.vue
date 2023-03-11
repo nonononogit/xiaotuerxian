@@ -1,19 +1,20 @@
 <template>
-  <div class="crumbs">
+  <!-- <div class="crumbs">
     <router-link to="/home">首页</router-link>
     <i class="iconfont iconxiangyoujiantou"></i>
-    <!-- 让面包屑导航切换的时候，有过渡效果 -->
+    让面包屑导航切换的时候，有过渡效果
     <transition name="crumbs">
       <p v-if="category1Id === categoryData.id">{{ categoryData.name }}</p>
     </transition>
-  </div>
+  </div> -->
+  <Crumbs></Crumbs>
   <Banner></Banner>
   <div class="all-category">
     <h3>全部分类</h3>
     <ul class="all-category-list">
       <li v-for="category in categoryData.children" :key="category.id" @click="toSub(category.id)">
         <a href="javascript:;">
-          <img :src="category.picture" alt="">
+          <img :src="(category.picture as string)" alt="">
           <p>{{ category.name }}</p>
         </a>
       </li>
@@ -42,23 +43,23 @@ import { useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
 import { useHeaderStore } from '@/store/header';
-const category1Id = ref('')
+// const category1Id = ref('')
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const { categoryData } = storeToRefs(categoryStore)
-const headerStore = useHeaderStore()
-// 方式一：监听路由路径
-watch(() => router.currentRoute.value.path, (newValue, oldValue) => {
-  if (router.currentRoute.value.name !== 'sub') {
-    category1Id.value = router.currentRoute.value.params.id as string
-    // 如果点击的去首页，category1Id为空，则重新请求分类列表的数据
-    if(!category1Id.value) {
-      headerStore.reqHeaderStoreData()
-      return
-    }
-    categoryStore.reqCategoryStoreData(category1Id.value as string)
-  }
-}, { immediate: true })
+// const headerStore = useHeaderStore()
+// // 方式一：监听路由路径
+// watch(() => router.currentRoute.value.path, (newValue, oldValue) => {
+//   if (router.currentRoute.value.name !== 'sub') {
+//     category1Id.value = router.currentRoute.value.params.id as string
+//     // 如果点击的去首页，category1Id为空，则重新请求分类列表的数据
+//     if (!category1Id.value) {
+//       headerStore.reqHeaderStoreData()
+//       return
+//     }
+//     categoryStore.reqCategoryStoreData(category1Id.value as string)
+//   }
+// }, { immediate: true })
 // 点击全部分类子项路由跳转sub
 const toSub = (categoryId: string) => {
   router.push({

@@ -1,14 +1,15 @@
 <template>
-  <div class="crumbs">
+  <!-- <div class="crumbs">
     <router-link to="/home">首页</router-link>
     <i class="iconfont iconxiangyoujiantou"></i>
-    <a @click="toCategory(categorySubData.parentId)">{{ categorySubData.parentName }}</a>
+    <a @click="toCategory(categorySubData.parentId as string)">{{ categorySubData.parentName }}</a>
     <i class="iconfont iconxiangyoujiantou"></i>
-    <!-- 让面包屑导航切换的时候，有过渡效果 -->
+    让面包屑导航切换的时候，有过渡效果
     <transition name="crumbs">
       <p v-if="category2Id === categorySubData.id">{{ categorySubData.name }}</p>
     </transition>
-  </div>
+  </div> -->
+  <Crumbs></Crumbs>
   <Attr></Attr>
   <Goods></Goods>
 </template>
@@ -20,40 +21,38 @@ import { useRoute, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useCategoryStore, } from '@/store/category'
 import { storeToRefs } from 'pinia'
 export default defineComponent({
-  name:'Sub-Goods'
+  name: 'Sub-Goods'
 })
 </script>
 
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
-const category2Id = ref('')
-const categoryStore = useCategoryStore()
-const { categorySubData } = storeToRefs(categoryStore)
-// 方式二：利用导航守卫，路由更新时触发，点击导航路由变更时，请求对应分类数据
-onBeforeRouteUpdate(to => {
-  if (to.name === 'sub') {
-    category2Id.value = to.params.id as string
-    categoryStore.reqCategorySubStoreData(to.params.id as string)
-  }
-})
-// 从其他页面跳转到分类页时先发一次请求
-onMounted(() => {
-  categoryStore.reqCategorySubStoreData(route.params.id as string)
-  category2Id.value = route.params.id as string
-})
-// 跳转至category页面
-const toCategory = (id: string) => {
-  router.push({
-    name: 'category',
-    params: { id }
-  })
-}
-
+// const route = useRoute()
+// const router = useRouter()
+// const category2Id = ref('')
+// const categoryStore = useCategoryStore()
+// const { categorySubData } = storeToRefs(categoryStore)
+// // 方式二：利用导航守卫，路由更新时触发，点击导航路由变更时，请求对应分类数据
+// onBeforeRouteUpdate(to => {
+//   if (to.name === 'sub') {
+//     category2Id.value = to.params.id as string
+//     categoryStore.reqCategorySubStoreData(to.params.id as string)
+//   }
+// })
+// // 从其他页面跳转到分类页时先发一次请求
+// onMounted(() => {
+//   categoryStore.reqCategorySubStoreData(route.params.id as string)
+//   category2Id.value = route.params.id as string
+// })
+// // 跳转至category页面
+// const toCategory = (id: string) => {
+//   router.push({
+//     name: 'category',
+//     params: { id }
+//   })
+// }
 </script>
 
 <style lang="less" scoped>
-
 // 面包屑导航
 .crumbs {
   display: flex;
@@ -87,6 +86,4 @@ const toCategory = (id: string) => {
   opacity: 0;
   transform: translateX(20px);
 }
-
-
 </style>

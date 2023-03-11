@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
-import { CategoryData, CategorySubData, TemporaryData, ReqTemporaryParams } from '@/api/category'
+import { CategoryData, CategoryChildrenList, TemporaryData, ReqTemporaryParams } from '@/api/category'
 import categoryApi from '@/api/category'
 import { ElMessage } from 'element-plus'
 
 // 定义store中请求回来state中的Category数据类型
 type CategoryStoreStateData = {
   categoryData: CategoryData
-  categorySubData: CategorySubData
+  categorySubData: CategoryChildrenList
   temporaryData: TemporaryData
 }
 // 定义初始化Category数据类型
@@ -18,7 +18,7 @@ function initCategoryData(): CategoryData {
     picture: '' || null
   }
 }
-function initCategorySubData(): CategorySubData {
+function initCategorySubData(): CategoryChildrenList {
   return {
     brands: [],
     categories: [],
@@ -66,7 +66,7 @@ export const useCategoryStore = defineStore('category', {
         const result = await categoryApi.reqCategorySubData(categoryId)
         this.categorySubData = result
         // 给销售属性类添加选择的参考值
-        this.categorySubData.saleProperties.forEach(item=>{
+        this.categorySubData.saleProperties!.forEach(item=>{
           item.select = '1'
         })
       } catch (error) {

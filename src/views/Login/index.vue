@@ -221,7 +221,6 @@ const login = async () => {
             position: relative;
             width: 300px;
             height: 36px;
-            // border: 1px solid #cfcdcd;
             margin-bottom: 28px;
 
             &>i {

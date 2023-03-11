@@ -2,6 +2,7 @@ import type {RouteRecordRaw} from "vue-router"
 const routes:RouteRecordRaw[] = [
   {
     path:'/home',
+    name:'home',
     component:()=>import('@/views/Home/index.vue')
   },
   {
@@ -28,6 +29,11 @@ const routes:RouteRecordRaw[] = [
     meta:{
       isHidden:true
     }
+  },
+  {
+    path:'/product/:id?',
+    name:'product',
+    component:()=>import('@/views/Product/index.vue')
   },
   {
     path:'/',

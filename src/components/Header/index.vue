@@ -45,7 +45,7 @@
                 <a href="javascript:;" @click="toCategory(nav.id)">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
-                    <a href="javascript:;"><img :src="navChildren.picture" />
+                    <a href="javascript:;" @click="toCategorySub(navChildren.id)"><img :src="navChildren.picture" />
                       <p>{{ navChildren.name }}</p>
                     </a>
                   </li>
@@ -86,12 +86,14 @@
           </template>
           <template #default>
             <ul class="middleNav">
-              <li class="middleNav-item"><a href="javascript:;">首页</a></li>
-              <li class="middleNav-item" v-for="nav in headerData" :key="nav.id" @click.stop="toCategory(nav.id)">
-                <a href="javascript:;">{{ nav.name }}</a>
+              <li class="middleNav-item">
+                <router-link to="/home">首页</router-link>
+              </li>
+              <li class="middleNav-item" v-for="nav in headerData" :key="nav.id">
+                <a href="javascript:;" @click="toCategory(nav.id)">{{ nav.name }}</a>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
-                    <a href="javascript:;"><img :src="navChildren.picture" />
+                    <a href="javascript:;" @click="toCategorySub(navChildren.id)"><img :src="navChildren.picture" />
                       <p>{{ navChildren.name }}</p>
                     </a>
                   </li>
@@ -139,6 +141,14 @@ const toCategory = (id: string) => {
   router.push({
     name: 'category',
     params: {
+      id
+    }
+  })
+}
+const toCategorySub = (id: string)=>{
+  router.push({
+    name:'sub',
+    params:{
       id
     }
   })
