@@ -17,7 +17,7 @@
     <div v-if="routeName === 'product'">
       <i class="iconfont iconxiangyoujiantou"></i>
       <transition name="crumbs">
-        <p v-if="goodsId === goodsDetail?.id">{{ goodsDetail?.desc }}</p>
+        <p v-if="goodsId === goodsDetail?.id">{{ goodsDetail?.name }}</p>
       </transition>
     </div>
   </div>
@@ -40,6 +40,7 @@ const { categoryData } = storeToRefs(categoryStore)
 const { categorySubData } = storeToRefs(categoryStore)
 const headerStore = useHeaderStore()
 const routeName = route.name
+const emits = defineEmits(['goodsInfo'])
 const goodsDetail = ref<GoodsDetaiData>()
 // 在商品详情页获取的商品分类数据
 const categories = ref<SubCategoriesData>()
@@ -66,6 +67,7 @@ const routeUpdated = async (routeName:string,params:string) => {
       try {
         goodsDetail.value = await goodsApi.reqGoodsDetailData(goodsId.value)
         categories.value = goodsDetail.value.categories.find((item: any) => item.layer === 2)
+        emits('goodsInfo',goodsDetail.value)
       } catch (error) {
         ElMessage.error('请求获取商品详情数据失败')
       }
@@ -97,8 +99,6 @@ div {
 
 // 面包屑导航
 .crumbs {
-  // position: relative;
-
   margin: 25px 0 25px 10px;
   font-size: 14px;
 
@@ -116,11 +116,6 @@ div {
     margin: 0 5px;
     font-size: 12px;
   }
-
-  // p {
-  //   position: absolute;
-  //   left: 50px;
-  // }
 }
 
 // 面包屑导航过渡效果

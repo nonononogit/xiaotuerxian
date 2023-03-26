@@ -1,5 +1,7 @@
 <template>
-  <ProductHeader></ProductHeader>
+  <div class="container">
+    <ProductHeader></ProductHeader>
+  </div>
 </template>
 <script setup lang="ts">
 import ProductHeader from '@/views/Product/components/Product-Header.vue'
