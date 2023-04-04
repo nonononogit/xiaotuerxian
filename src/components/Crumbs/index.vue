@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch,getCurrentInstance } from 'vue';
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
@@ -32,6 +32,8 @@ import { useHeaderStore } from '@/store/header';
 import goodsApi, { GoodsDetaiData } from '@/api/product'
 import { ElMessage } from 'element-plus';
 import type { SubCategoriesData } from '@/api/category'
+// 
+const instance = getCurrentInstance()
 const goodsId = ref('')
 const route = useRoute()
 const router = useRouter()
@@ -68,6 +70,7 @@ const routeUpdated = async (routeName:string,params:string) => {
         goodsDetail.value = await goodsApi.reqGoodsDetailData(goodsId.value)
         categories.value = goodsDetail.value.categories.find((item: any) => item.layer === 2)
         emits('goodsInfo',goodsDetail.value)
+        instance?.proxy?.$Bus.emit('goodsDetail',goodsDetail.value)
       } catch (error) {
         ElMessage.error('请求获取商品详情数据失败')
       }

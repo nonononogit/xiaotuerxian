@@ -1,127 +1,131 @@
 <template>
-  <Crumbs @goodsInfo="goodsInfoData"></Crumbs>
-  <el-skeleton :loading="!defaultImg" animated>
-    <!-- 暂无数据时的骨架模板 -->
-    <template #template>
-      <div class="product-info">
-        <div class="product-info-photo">
-          <div class="product-photo">
-            <div class="photo-main">
-              <el-skeleton-item variant="image" style="width: 400px; height: 400px" />
+  <div>
+    <Crumbs @goodsInfo="goodsInfoData"></Crumbs>
+    <el-skeleton :loading="!defaultImg" animated>
+      <!-- 暂无数据时的骨架模板 -->
+      <template #template>
+        <div class="product-info">
+          <div class="product-info-photo">
+            <div class="product-photo">
+              <div class="photo-main">
+                <el-skeleton-item variant="image" style="width: 400px; height: 400px" />
+              </div>
+              <div class="photo-big" ref="bigImg" v-show="isMouseIn"></div>
+              <ul class="photo-preview">
+                <li v-for=" item in 5" :key="item">
+                  <el-skeleton-item variant="image" style="width: 68px; height: 68px" />
+                </li>
+              </ul>
             </div>
-            <div class="photo-big" ref="bigImg" v-show="isMouseIn"></div>
-            <ul class="photo-preview">
-              <li v-for=" item in 5" :key="item">
-                <el-skeleton-item variant="image" style="width: 68px; height: 68px" />
+            <ul class="goods-sales">
+              <li v-for=" item in 4" :key="item">
+                <el-skeleton-item variant="p" style="width: 100px;" />
+                <el-skeleton-item variant="p" style="width: 100px;" />
+                <el-skeleton-item variant="p" style="width: 100px;" />
               </li>
             </ul>
           </div>
-          <ul class="goods-sales">
-            <li v-for=" item in 4" :key="item">
-              <el-skeleton-item variant="p" style="width: 100px;" />
-              <el-skeleton-item variant="p" style="width: 100px;" />
-              <el-skeleton-item variant="p" style="width: 100px;" />
-            </li>
-          </ul>
+          <div class="product-info-spec">
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+            <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
+          </div>
         </div>
-        <div class="product-info-spec">
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-          <el-skeleton-item variant="p" style="width: 500px; margin-bottom: 40px;" />
-        </div>
-      </div>
-    </template>
-    <!-- 有数据后正常渲染的模板 -->
-    <template #default>
-      <div class="product-info">
-        <div class="product-info-photo">
-          <div class="product-photo">
-            <div class="photo-main">
-              <div class="event" @mousemove="mouseInMainImg" @mouseleave="isMouseIn = false"></div>
-              <div class="glass" ref="glass" v-show="isMouseIn"></div>
-              <img :src="defaultImg" alt="">
+      </template>
+      <!-- 有数据后正常渲染的模板 -->
+      <template #default>
+        <div class="product-info">
+          <div class="product-info-photo">
+            <div class="product-photo">
+              <div class="photo-main">
+                <div class="event" @mousemove="mouseInMainImg" @mouseleave="isMouseIn = false"></div>
+                <div class="glass" ref="glass" v-show="isMouseIn"></div>
+                <img :src="defaultImg" alt="">
+              </div>
+              <div class="photo-big-box" ref="bigImg" v-show="isMouseIn">
+                <!-- <img class="photo-big"  :src="defaultImg" alt=""> -->
+              </div>
+              <ul class="photo-preview">
+                <li :class="{ active: defaultImg === mainPictures }" v-for="mainPictures in goodsDetail?.mainPictures"
+                  :key="mainPictures" @mouseenter="mouseInPreview(mainPictures)">
+                  <img :src="mainPictures" alt="">
+                </li>
+              </ul>
             </div>
-            <div class="photo-big" ref="bigImg" v-show="isMouseIn"></div>
-            <ul class="photo-preview">
-              <li :class="{ active: defaultImg === mainPictures }" v-for="mainPictures in goodsDetail?.mainPictures"
-                :key="mainPictures" @mouseenter="mouseInPreview(mainPictures)">
-                <img :src="mainPictures" alt="">
+            <ul class="goods-sales">
+              <li>
+                <p>人气销量</p>
+                <p>200+</p>
+                <p><i class="iconfont iconqizhi-"></i>销量人气</p>
+              </li>
+              <li>
+                <p>商品评价</p>
+                <p>200+</p>
+                <p><i class="iconfont iconpinglun1"></i>查看评价</p>
+              </li>
+              <li>
+                <p>收藏人气</p>
+                <p>200+</p>
+                <p><i class="iconfont iconshoucang"></i>收藏商品</p>
+              </li>
+              <li>
+                <p>品牌信息</p>
+                <p>奔驰</p>
+                <p><i class="iconfont icondynamic-filling"></i>品牌主页</p>
               </li>
             </ul>
           </div>
-          <ul class="goods-sales">
-            <li>
-              <p>人气销量</p>
-              <p>200+</p>
-              <p><i class="iconfont iconqizhi-"></i>销量人气</p>
-            </li>
-            <li>
-              <p>商品评价</p>
-              <p>200+</p>
-              <p><i class="iconfont iconpinglun1"></i>查看评价</p>
-            </li>
-            <li>
-              <p>收藏人气</p>
-              <p>200+</p>
-              <p><i class="iconfont iconshoucang"></i>收藏商品</p>
-            </li>
-            <li>
-              <p>品牌信息</p>
-              <p>奔驰</p>
-              <p><i class="iconfont icondynamic-filling"></i>品牌主页</p>
-            </li>
-          </ul>
-        </div>
-        <div class="product-info-spec">
-          <p class="goods-name">{{ goodsDetail?.name }}</p>
-          <p class="goods-desc">{{ goodsDetail?.desc }}</p>
-          <p class="goods-price"><span>{{ goodsDetail?.price }}</span><span>{{ goodsDetail?.oldPrice }}</span></p>
-          <div class="service">
-            <dl>
-              <dt>促销</dt>
-              <dd>12月好物放松，App领券购买直降120元</dd>
-            </dl>
-            <dl>
-              <dt>配送</dt>
-              <dd>至
-                <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange">
-                </el-cascader>
-              </dd>
-            </dl>
-            <dl>
-              <dt>服务</dt>
+          <div class="product-info-spec">
+            <p class="goods-name">{{ goodsDetail?.name }}</p>
+            <p class="goods-desc">{{ goodsDetail?.desc }}</p>
+            <p class="goods-price"><span>{{ goodsDetail?.price }}</span><span>{{ goodsDetail?.oldPrice }}</span></p>
+            <div class="service">
+              <dl>
+                <dt>促销</dt>
+                <dd>12月好物放松，App领券购买直降120元</dd>
+              </dl>
+              <dl>
+                <dt>配送</dt>
+                <dd>至
+                  <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange">
+                  </el-cascader>
+                </dd>
+              </dl>
+              <dl>
+                <dt>服务</dt>
+                <dd>
+                  <span>无忧退货</span>
+                  <span>快速退款</span>
+                  <span>免费包邮</span>
+                  <a href="javascript:;">了解详情</a>
+                </dd>
+              </dl>
+            </div>
+            <dl class="sku" v-for="specs in goodsDetail?.specs" :key="specs.name">
+              <dt>{{ specs.name }}</dt>
               <dd>
-                <span>无忧退货</span>
-                <span>快速退款</span>
-                <span>免费包邮</span>
-                <a href="javascript:;">了解详情</a>
+                <img v-for="values in specs.values" :key="values.picture" :src="values.picture" alt="">
               </dd>
             </dl>
-          </div>
-          <dl class="sku" v-for="specs in goodsDetail?.specs" :key="specs.name">
-            <dt>{{ specs.name }}</dt>
-            <dd>
-              <img v-for="values in specs.values" :key="values.picture" :src="values.picture" alt="">
-            </dd>
-          </dl>
-          <div class="count">
-            <p>数量</p>
-            <div class="count-handle">
-              <a href="javascript:;">-</a>
-              <input type="text">
-              <a href="javascript:;">+</a>
+            <div class="count">
+              <p>数量</p>
+              <div class="count-handle">
+                <a href="javascript:;">-</a>
+                <input type="text">
+                <a href="javascript:;">+</a>
+              </div>
             </div>
+            <button class="btn">加入购物车</button>
           </div>
-          <button class="btn">加入购物车</button>
         </div>
-      </div>
-    </template>
-  </el-skeleton>
+      </template>
+    </el-skeleton>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -206,14 +210,21 @@ const mouseInPreview = (img: string) => {
         }
       }
 
-      .photo-big {
+      .photo-big-box {
         position: absolute;
         left: 525px;
+        // overflow: hidden;
         width: 400px;
         height: 400px;
         background-repeat: no-repeat;
         background-size: 800px;
         z-index: 999;
+        background-color: #f8f8f8;
+        // .photo-big {
+        //   position: absolute;
+        //   width: 800px;
+        //   height: 800px;
+        // }
       }
 
       .photo-preview {

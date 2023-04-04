@@ -33,4 +33,12 @@ export default defineConfig({
       }
     }
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        additionalData: `@import "${resolve(__dirname, 'src/styles/common.less')}";`
+      }
+    }
+  }
 })

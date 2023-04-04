@@ -34,19 +34,25 @@ export interface DetailsData {
   properties: Array<{ name: string, value: string }>
 }
 export interface SkuData {
-  id:string
-  inventory:5996
-  oldPrice:string
-  price:string
-  skuCode:string
-  specs:Array<{name:string,valueName:string}>
+  id: string
+  inventory: 5996
+  oldPrice: string
+  price: string
+  skuCode: string
+  specs: Array<{ name: string, valueName: string }>
 }
-export interface SpecsData{
-  name:string
-  values:Array<{desc:string,name:string,picture:string}> 
+export interface SpecsData {
+  name: string
+  values: Array<{ desc: string, name: string, picture: string }>
 }
 export default {
-  reqGoodsDetailData(goodsId:string){
-    return request.get<any,GoodsDetaiData>(`/goods?id=${goodsId}`)
-  }
+  reqGoodsDetailData(goodsId: string) {
+    return request.get<any, GoodsDetaiData>(`/goods?id=${goodsId}`)
+  },
+  reqKindData(goodsId: string, limit: string = '16') {
+    return request.get<any, goodsData>(`/goods/relevant?id=${goodsId}&limit=${limit}`)
+  },
+  reqHotData(goodsId: string,limit: string='3',type: number,  ) {
+    return request.get<any, goodsData>(`/goods/hot?id=${goodsId}&limit=${limit}&type=${type}`)
+  },
 }

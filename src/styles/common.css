@@ -51,3 +51,8 @@ body {
 #app {
   background-color: #f5f5f5;
 }
+.ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
