@@ -8,7 +8,10 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Banner: typeof import('./src/components/Banner/index.vue')['default']
+    Bread: typeof import('./src/components/Bread/Bread.vue')['default']
+    BreadItem: typeof import('./src/components/Bread/BreadItem.vue')['default']
     Crumbs: typeof import('./src/components/Crumbs/index.vue')['default']
+    CrumbsItem: typeof import('./src/components/Crumbs/CrumbsItem.vue')['default']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']

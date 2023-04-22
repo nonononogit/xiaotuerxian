@@ -112,12 +112,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, watch } from "vue"
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { HeaderListData } from '@/api/home'
 const router = useRouter()
+const route = useRoute()
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
 // 控制头部导航加载状态的参考值
@@ -136,6 +137,12 @@ onMounted(async () => {
   await headerStore.reqHeaderStoreData()
   // 控制头部导航加载状态
   mainNavLoading.value = false
+})
+watch(()=>router.currentRoute.value.name,(newValue,oldValue)=>{
+  // 进到首页oldvalue是undefined，就不用发请求
+  if(oldValue !== undefined && newValue === 'home'){
+    headerStore.reqHeaderStoreData()
+  }
 })
 const toCategory = (id: string) => {
   router.push({

@@ -56,3 +56,12 @@ body {
   white-space: nowrap;
   overflow: hidden;
 }
+.crumbs-enter-active,
+.crumbs-leave-active {
+  transition: all 0.5s ease;
+}
+.crumbs-enter-from,
+.crumbs-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}

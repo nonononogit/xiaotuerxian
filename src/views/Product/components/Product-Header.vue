@@ -1,6 +1,13 @@
 <template>
   <div>
-    <Crumbs @goodsInfo="goodsInfoData"></Crumbs>
+    <Bread>
+      <BreadItem :to="`/home`">首页</BreadItem>
+      <BreadItem :to="`/category/${categories?.parent?.id}`">{{ categories?.parent?.name }}</BreadItem>
+      <BreadItem :to="`/category/sub/${categories?.id}`">{{ categories?.name }}</BreadItem>
+      <Transition name="crumbs" mode="out-in">
+        <BreadItem :key="goodsDetailData.id">{{ goodsDetailData.name }}</BreadItem>
+      </Transition>
+    </Bread>
     <el-skeleton :loading="!defaultImg" animated>
       <!-- 暂无数据时的骨架模板 -->
       <template #template>
@@ -48,10 +55,9 @@
                 <img :src="defaultImg" alt="">
               </div>
               <div class="photo-big-box" ref="bigImg" v-show="isMouseIn">
-                <!-- <img class="photo-big"  :src="defaultImg" alt=""> -->
               </div>
               <ul class="photo-preview">
-                <li :class="{ active: defaultImg === mainPictures }" v-for="mainPictures in goodsDetail?.mainPictures"
+                <li :class="{ active: defaultImg === mainPictures }" v-for="mainPictures in goodsDetailData?.mainPictures"
                   :key="mainPictures" @mouseenter="mouseInPreview(mainPictures)">
                   <img :src="mainPictures" alt="">
                 </li>
@@ -81,9 +87,10 @@
             </ul>
           </div>
           <div class="product-info-spec">
-            <p class="goods-name">{{ goodsDetail?.name }}</p>
-            <p class="goods-desc">{{ goodsDetail?.desc }}</p>
-            <p class="goods-price"><span>{{ goodsDetail?.price }}</span><span>{{ goodsDetail?.oldPrice }}</span></p>
+            <p class="goods-name">{{ goodsDetailData?.name }}</p>
+            <p class="goods-desc">{{ goodsDetailData?.desc }}</p>
+            <p class="goods-price"><span>{{ goodsDetailData?.price }}</span><span>{{ goodsDetailData?.oldPrice }}</span>
+            </p>
             <div class="service">
               <dl>
                 <dt>促销</dt>
@@ -106,18 +113,26 @@
                 </dd>
               </dl>
             </div>
-            <dl class="sku" v-for="specs in goodsDetail?.specs" :key="specs.name">
-              <dt>{{ specs.name }}</dt>
-              <dd>
-                <img v-for="values in specs.values" :key="values.picture" :src="values.picture" alt="">
-              </dd>
-            </dl>
+            <div class="sku-container">
+              <dl class="sku" v-for="specs in goodsDetailData?.specs" :key="specs.name">
+                <dt>{{ specs.name }}</dt>
+                <dd>
+                  <template v-for="values in specs.values" :key="values.name">
+                    <img :class="{ active: values.selected }" v-if="values.picture" :src="values.picture"
+                      :alt="values.name" @click="selectAttr(specs, values)">
+                    <span :class="{ active: values.selected }" v-else @click="selectAttr(specs, values)">{{ values.name
+                    }}</span>
+                  </template>
+                </dd>
+              </dl>
+            </div>
             <div class="count">
               <p>数量</p>
               <div class="count-handle">
-                <a href="javascript:;">-</a>
-                <input type="text">
-                <a href="javascript:;">+</a>
+                <a href="javascript:;"
+                  @click="addCartParams.count = addCartParams.count <= 1 ? 1 : --addCartParams.count">-</a>
+                <input type="text" readonly v-model="addCartParams.count">
+                <a href="javascript:;" @click="++addCartParams.count">+</a>
               </div>
             </div>
             <button class="btn">加入购物车</button>
@@ -129,22 +144,29 @@
 </template>
 
 <script setup lang="ts">
-import { GoodsDetaiData } from '@/api/product';
+import { GoodsDetaiData, SpecsData, SpecsValuesData } from '@/api/product';
 import { regionData } from 'element-china-area-data'
-import { ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useProductStore } from '@/store/product';
+import { useRoute } from 'vue-router';
+// 地址数据
 const options = ref(regionData)
+// 选择的地址数据
 const selectedOptions = ref()
-const goodsDetail = ref()
+const goodsDetail = ref<GoodsDetaiData>()
 const defaultImg = ref('')
 const isMouseIn = ref(false)
 const glass = ref(HTMLDivElement.prototype)
 const bigImg = ref(HTMLDivElement.prototype)
-const handleChange = () => { }
-// 接收面包屑导航组件传过来的数据
-const goodsInfoData = (goodsInfoData: GoodsDetaiData) => {
-  goodsDetail.value = goodsInfoData
-  defaultImg.value = goodsInfoData.mainPictures[0]
-}
+const addCartParams = reactive({
+  count: 1,
+  skuId: ''
+})
+const route = useRoute()
+const productStore = useProductStore()
+const { goodsDetailData } = storeToRefs(productStore)
+const handleChange = () => {}
 // 鼠标移动到产品主图
 const mouseInMainImg = (e: MouseEvent) => {
   bigImg.value.style.backgroundImage = `url(${defaultImg.value})`
@@ -169,7 +191,31 @@ const mouseInMainImg = (e: MouseEvent) => {
 const mouseInPreview = (img: string) => {
   defaultImg.value = img
 }
-
+// 点击选择商品属性
+const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
+  if (values.selected) {
+    values.selected = false
+    return
+  }
+  specs.values.forEach(item => {
+    item.selected = false
+  })
+  values.selected = !values.selected
+}
+onMounted(async () => {
+  const result = await productStore.getGoodsDetail(route.params.id as string)
+  if (result === 'ok') {
+    goodsDetailData.value.specs.forEach(item => {
+      item.values.forEach(item2 => {
+        item2.selected = false
+      })
+    })
+    defaultImg.value = goodsDetailData?.value.mainPictures[0]
+  }
+})
+const categories = computed(() => {
+  return goodsDetailData.value?.categories.find((item: any) => item.layer === 2)
+})
 </script>
 
 <style lang="less" scoped>
@@ -213,18 +259,12 @@ const mouseInPreview = (img: string) => {
       .photo-big-box {
         position: absolute;
         left: 525px;
-        // overflow: hidden;
         width: 400px;
         height: 400px;
         background-repeat: no-repeat;
         background-size: 800px;
         z-index: 999;
         background-color: #f8f8f8;
-        // .photo-big {
-        //   position: absolute;
-        //   width: 800px;
-        //   height: 800px;
-        // }
       }
 
       .photo-preview {
@@ -303,6 +343,7 @@ const mouseInPreview = (img: string) => {
 
   .product-info-spec {
     padding: 30px 30px 30px 0;
+    font-size: 14px;
 
     .goods-name {
       font-size: 22px;
@@ -372,26 +413,47 @@ const mouseInPreview = (img: string) => {
       }
     }
 
-    .sku {
-      display: flex;
-      align-items: center;
-      padding: 20px 0 10px 10px;
-      color: #999;
+    .sku-container {
+      padding: 20px 0 0px 10px;
 
-      dt {
-        width: 50px;
-      }
+      .sku {
+        display: flex;
+        align-items: center;
+        padding: 0 0 10px 0px;
+        color: #999;
 
-      dd {
-        img {
+        dt {
           width: 50px;
-          height: 50px;
-          margin: 0 10px 5px 0;
-          border: 1px solid #e4e4e4;
+        }
+
+        dd {
           cursor: pointer;
+
+          img {
+            width: 50px;
+            height: 50px;
+            margin: 0 10px 5px 0;
+            border: 1px solid #e4e4e4;
+
+          }
+
+          .active {
+            border: 1px solid #27ba9b;
+          }
+
+          span {
+            display: inline-block;
+            height: 30px;
+            line-height: 28px;
+            padding: 0 20px;
+            border: 1px solid #e4e4e4;
+            margin-right: 10px;
+            user-select: none;
+          }
         }
       }
     }
+
 
     .count {
       display: flex;

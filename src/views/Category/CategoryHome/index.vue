@@ -1,13 +1,10 @@
 <template>
-  <!-- <div class="crumbs">
-    <router-link to="/home">首页</router-link>
-    <i class="iconfont iconxiangyoujiantou"></i>
-    让面包屑导航切换的时候，有过渡效果
-    <transition name="crumbs">
-      <p v-if="category1Id === categoryData.id">{{ categoryData.name }}</p>
-    </transition>
-  </div> -->
-  <Crumbs></Crumbs>
+  <Bread>
+    <BreadItem :to="`/home`">首页</BreadItem> 
+    <Transition name="crumbs" mode="out-in">
+      <BreadItem :key="categoryData.id">{{ categoryData.name }}</BreadItem>
+    </Transition>
+  </Bread>
   <Banner></Banner>
   <div class="all-category">
     <h3>全部分类</h3>
@@ -38,28 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router'
+import { onMounted} from 'vue';
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
-import { useHeaderStore } from '@/store/header';
-// const category1Id = ref('')
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const { categoryData } = storeToRefs(categoryStore)
-// const headerStore = useHeaderStore()
-// // 方式一：监听路由路径
-// watch(() => router.currentRoute.value.path, (newValue, oldValue) => {
-//   if (router.currentRoute.value.name !== 'sub') {
-//     category1Id.value = router.currentRoute.value.params.id as string
-//     // 如果点击的去首页，category1Id为空，则重新请求分类列表的数据
-//     if (!category1Id.value) {
-//       headerStore.reqHeaderStoreData()
-//       return
-//     }
-//     categoryStore.reqCategoryStoreData(category1Id.value as string)
-//   }
-// }, { immediate: true })
 // 点击全部分类子项路由跳转sub
 const toSub = (categoryId: string) => {
   router.push({
@@ -70,6 +52,13 @@ const toSub = (categoryId: string) => {
     path: '/category/sub/' + categoryId
   })
 }
+// 利用导航守卫，路由更新时触发，点击导航路由变更时，请求对应分类数据，要结合onMounted使用
+onBeforeRouteUpdate(to => {
+  categoryStore.reqCategoryStoreData(to.params.id as string)
+})
+onMounted(() => {
+  categoryStore.reqCategoryStoreData(router.currentRoute.value.params.id as string)
+})
 </script>
 
 <style lang="less" scoped>
@@ -213,32 +202,4 @@ h3 {
   line-height: 100px;
 }
 
-// 面包屑导航
-.crumbs {
-  display: flex;
-  align-items: center;
-  margin: 25px 0 25px 10px;
-  font-size: 14px;
-
-  a {
-    color: #666666;
-  }
-
-  .iconfont {
-    margin: 0 5px;
-    font-size: 12px;
-  }
-}
-
-// 面包屑导航过渡效果
-.crumbs-enter-active,
-.crumbs-leave-active {
-  transition: all 0.5s ease;
-}
-
-.crumbs-enter-from,
-.crumbs-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
 </style>

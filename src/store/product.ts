@@ -1,25 +1,100 @@
 import { defineStore } from 'pinia'
-import productApi from '@/api/product'
+import productApi, { CommentContentData, CommentHeadData, GoodsDetaiData } from '@/api/product'
 import { ElMessage } from 'element-plus'
 import { goodsData } from '@/api/home'
 interface ProductStoreData {
+  goodsDetailData: GoodsDetaiData
   kindListData: goodsData
   hotListData: {
     day: goodsData
     week: goodsData
   }
+  commentHeadData: CommentHeadData
+  commentContentData: CommentContentData
+}
+function initGoodsDetailData() {
+  return {
+    brand: {
+      desc: '',
+      id: '',
+      logo: '',
+      name: '',
+      nameEn: '',
+      picture: '',
+      place: '',
+      type: ''
+    },
+    categories: [],
+    collectCount: '',
+    commentCount: '',
+    desc: '',
+    details: {
+      pictures: [],
+      properties: []
+    },
+    discount: '',
+    evaluationInfo: null,
+    hotByDay: [],
+    id: '',
+    inventory: '',
+    isCollect: null,
+    isPreSale: false,
+    mainPictures: [],
+    mainVideos: [],
+    name: '',
+    oldPrice: '',
+    price: '',
+    recommends: null,
+    salesCount: '',
+    similarProducts: [],
+    skus: [],
+    specs: [],
+    spuCode: '',
+    userAddresses: null,
+    videoScale: '',
+  }
+}
+function initCommentHeadData() {
+  return {
+    evaluateCount: 0,
+    hasPictureCount: 0,
+    praisePercent: '',
+    salesCount: 0,
+    tags: []
+  }
+}
+function initCommentContentData() {
+  return {
+    counts: 0,
+    items: [],
+    page: '',
+    pageSize: 0,
+    pages: 0
+  }
 }
 export const useProductStore = defineStore('product', {
   state(): ProductStoreData {
     return {
+      goodsDetailData: initGoodsDetailData(),
       kindListData: [],
       hotListData: {
         day: [],
         week: []
-      }
+      },
+      commentHeadData: initCommentHeadData(),
+      commentContentData: initCommentContentData()
     }
   },
   actions: {
+    async getGoodsDetail(goodsId: string) {
+      try {
+        const result = await productApi.reqGoodsDetailData(goodsId)
+        this.goodsDetailData = result
+        return 'ok'
+      } catch (error) {
+        ElMessage.error('请求获取商品详情数据失败')
+      }
+    },
     async getKindListData(goodsId: string) {
       try {
         const result = await productApi.reqKindData(goodsId)
@@ -38,7 +113,24 @@ export const useProductStore = defineStore('product', {
       } catch (error) {
         ElMessage.error('请求热销数据失败')
       }
-    }
+    },
+    async getCommentHeadData(goodsId: string) {
+      try {
+        const result = await productApi.reqCommentHeadData(goodsId)
+        this.commentHeadData = result
+      } catch (error) {
+        ElMessage.error('请求获取评价数据失败')
+      }
+    },
+    async getCommentContentData(goodsId: string) {
+      try {
+        const result = await productApi.reqCommentContentData(goodsId)
+        this.commentContentData = result
+      } catch (error) {
+        ElMessage.error('请求获取评价数据失败')
+      }
+    },
+
   },
   getters: {
     kindItem1Data(): goodsData {

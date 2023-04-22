@@ -3,19 +3,19 @@
     <section class="detail-left">
       <div class="detail-left-top">
         <nav class="nav">
-          <a href="javascript:;" :class="{active:showDetail===true}">商品详情</a>
-          <a href="javascript:;" :class="{active:showDetail===false}">商品评价<span>(0)</span></a>
+          <a href="javascript:;" :class="{ active: showDetail === true }" @click="showDetail = true">商品详情</a>
+          <a href="javascript:;" :class="{ active: showDetail === false }" @click="showComment">商品评价<span>(0)</span></a>
         </nav>
-        <div class="goods-detail" v-if="!showDetail">
+        <div class="goods-detail" v-if="showDetail">
           <ul class="goods-attrs">
-            <li v-for="properties in goodsDetail?.details?.properties" :key="properties.name">
+            <li v-for="properties in goodsDetailData?.details?.properties" :key="properties.name">
               <span>{{ properties.name }}</span>
               <span>{{ properties.value }}</span>
             </li>
           </ul>
-          <img v-for="img in goodsDetail?.details?.pictures" :src="img" :key="img" alt="">
+          <img v-for="img in goodsDetailData?.details?.pictures" :src="img" :key="img" alt="">
         </div>
-        <ProductComment v-else></ProductComment>
+        <ProductComment v-else ref="commentRef"></ProductComment>
       </div>
       <div class="notice">
         <h3>注意事项</h3>
@@ -64,19 +64,23 @@
 import ProductComment from '@/views/Product/components/Product-Comment.vue'
 import { useProductStore } from '@/store/product'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref, getCurrentInstance } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
+
 const showDetail = ref(true)
 const props = defineProps(['goodsId'])
 const productStore = useProductStore()
-const { hotListData } = storeToRefs(productStore)
-const goodsDetail = ref()
-const instance = getCurrentInstance()
+const { hotListData,goodsDetailData } = storeToRefs(productStore)
+const commentRef = ref<InstanceType<typeof ProductComment>>()
+// 点击商品评价
+const showComment = () => {
+  showDetail.value = false
+  nextTick(() => {
+    commentRef.value?.getCommentData(props.goodsId)
+  })
 
+}
 onMounted(() => {
   productStore.getHotListData(props.goodsId)
-  instance?.proxy?.$Bus.on('goodsDetail', data => {
-    goodsDetail.value = data
-  })
 })
 </script>
 

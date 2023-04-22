@@ -3,11 +3,11 @@
     <div class="header">
       <div class="left">
         <div>
-          <p>1306</p>
+          <p>{{ commentHeadData.salesCount }}</p>
           <p>人购买</p>
         </div>
         <div>
-          <p>94.56%</p>
+          <p>{{ commentHeadData.praisePercent }}</p>
           <p>好评率</p>
         </div>
       </div>
@@ -16,12 +16,9 @@
           大家都在说：
         </div>
         <ul class="tag">
-          <li class="active">全部评价（832）</li>
-          <li>全部评价（832）</li>
-          <li>全部评价（832）</li>
-          <li>全部评价（832）</li>
-          <li>全部评价（832）</li>
-          <li>全部评价（832）</li>
+          <li class="active">全部评价（{{ commentHeadData.evaluateCount }}）</li>
+          <li>有图（{{ commentHeadData.hasPictureCount }}）</li>
+          <li v-for="tag in commentHeadData.tags" :key="tag.title">{{ `${tag.title}（${tag.tagCount}）` }}</li>
         </ul>
       </div>
     </div>
@@ -32,56 +29,30 @@
       <a href="javascript:;">最热</a>
     </div>
     <div class="comment-content">
-      <div class="content-item">
+      <div class="content-item" v-for="item in commentContentData.items" :key="item.id">
         <div class="user">
-          <img class="avatar" src="" alt="">
-          <span class="nickname">兔****y</span>
+          <img class="avatar" :src="item.member?.avatar" alt="">
+          <span class="nickname">{{ item.member?.nickname }}</span>
         </div>
         <div class="content">
           <div class="star">
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconkongxinwujiaoxing"></i>
-            <span>颜色：白色 尺寸：10cm 产地：美国</span>
+            <i class="iconfont iconshixinwujiaoxing" v-for="index in item.score" :key="index"></i>
+            <i class="iconfont iconkongxinwujiaoxing" v-for="index in (5 - item.score)" :key="index"></i>
+            <span v-for="spesc in item.orderInfo?.specs" :key="spesc.name">{{ `${spesc.name}：${spesc.nameValue}` }}</span>
           </div>
-          <p class="desc">很有分量！颜色太漂亮了很喜欢很喜欢！做工也算比较精细</p>
-          <div class="time">
-            <span>2021-04-03 13:20:32</span>
-            <span><i class="iconfont iconjurassic_zan"></i>162</span>
-          </div>
-        </div>
-      </div>
-      <div class="content-item">
-        <div class="user">
-          <img class="avatar" src="" alt="">
-          <span class="nickname">兔****y</span>
-        </div>
-        <div class="content">
-          <div class="star">
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconshixinwujiaoxing"></i>
-            <i class="iconfont iconkongxinwujiaoxing"></i>
-            <span>颜色：白色 尺寸：10cm 产地：美国</span>
-          </div>
-          <p class="desc">這個煱我看中了3年，終於在大減價時下手。性價比超高！😁😁😁 今天剛剛收到，包裝精美，閃令令漂亮到冇朋友！😍😍😍 下星期會開煱！十分期待啊！</p>
-          <ul class="img-list">
-            <li class="active"><img src="" alt=""></li>
-            <li><img src="" alt=""></li>
-            <li><img src="" alt=""></li>
-            <li><img src="" alt=""></li>
-            <li><img src="" alt=""></li>
-          </ul>
-          <div class="preview">
-            <i class="iconfont iconchacha"></i>
-            <img src="" alt="">
+          <p class="desc">{{ item.content }}</p>
+          <div v-if="!item.pictures.length">
+            <ul class="img-list">
+              <li class="active" v-for="pic in item.pictures" :key="pic"><img :src="pic" alt=""></li>
+            </ul>
+            <div class="preview">
+              <i class="iconfont iconchacha"></i>
+              <img src="" alt="">
+            </div>
           </div>
           <div class="time">
-            <span>2021-04-03 13:20:32</span>
-            <span><i class="iconfont iconjurassic_zan"></i>162</span>
+            <span>{{ item.createTime }}</span>
+            <span><i class="iconfont iconjurassic_zan"></i>{{ item.praiseCount }}</span>
           </div>
         </div>
       </div>
@@ -90,7 +61,21 @@
 </template>
 
 <script setup lang="ts">
-
+import { useProductStore } from '@/store/product';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+const productStore = useProductStore()
+const { commentContentData, commentHeadData } = storeToRefs(productStore)
+const getCommentData = (goodsId: string) => {
+  productStore.getCommentHeadData(goodsId)
+  productStore.getCommentContentData(goodsId)
+}
+const stars = computed(()=>{
+  commentContentData.value.items.find(item=>item.score)
+})
+defineExpose({
+  getCommentData
+})
 </script>
 
 <style lang="less" scoped>
