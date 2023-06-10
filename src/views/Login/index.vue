@@ -36,8 +36,8 @@
                   <span>{{ errors.password }}</span>
                 </div>
               </div>
-            </template >
-            <template  v-else>
+            </template>
+            <template v-else>
               <div class="phone-box">
                 <i class="iconfont iconshouji"></i>
                 <Field :class="{ error: errors.mobile }" name="mobile" type="text" placeholder="请输入手机号"
@@ -103,9 +103,10 @@
 import { ref, watch } from 'vue';
 import { Form, Field } from 'vee-validate'
 import schema from '@/utils/vee-validate-schema'
-import { userStore } from '@/store/userInfo'
+import { useUserStore } from '@/store/userInfo'
 import LoginHeader from '@/views/Login/components/LoginHeader/index.vue'
 import LoginFooter from '@/views/Login/components/LoginFooter/index.vue'
+import router from '@/router';
 </script>
 <script setup lang="ts">
 // 控制账户登录或者扫码登录
@@ -115,12 +116,12 @@ let formLogin = ref(true)
 // 检查是否勾选协议
 let checkedTerms = ref(true)
 let form = ref({
-  account: '',
-  password: '',
+  account: 'demo',
+  password: 'hm#qd@23!',
   mobile: '',
   code: '',
 })
-const userInfo = userStore()
+const userInfo = useUserStore()
 const formDom = ref<HTMLFormElement>()
 // 监视切换登录方式，情况表单内容和验证状态
 watch(formLogin, async () => {
@@ -137,7 +138,10 @@ const login = async () => {
   const validate = await formDom.value!.validate()
   if (validate.results.account.valid && validate.results.password.valid) {
     const { account, password } = form.value
-    userInfo.getUserInfo({ account, password })
+    userInfo.getUserInfo({ account, password }).then(()=>{
+      userInfo.getCartData()
+      router.push('/')
+     })
   }
 }
 </script>
@@ -371,5 +375,4 @@ const login = async () => {
     }
   }
 }
-
 </style>

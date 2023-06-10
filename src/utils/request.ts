@@ -2,16 +2,23 @@ import axios, { type AxiosRequestHeaders, type AxiosResponse } from 'axios'
 import NProgress from 'nprogress'
 import { ElMessage } from 'element-plus'
 import 'nprogress/nprogress.css'
+import { useUserStore } from '@/store/userInfo'
+import pinia from '@/store'
 // 定义response对象的data接口，约束response.data的类型
 interface ResponseData<T> {
   msg: string,
   result: T
 }
+
 const instance = axios.create({
   baseURL: '/api',
   timeout: 20000
 })
 instance.interceptors.request.use(config => {
+  let token = useUserStore(pinia).userInfo.token
+  if(token){
+    (config.headers as AxiosRequestHeaders).Authorization = token
+  }
   NProgress.start()
   return config;
 }, error => {

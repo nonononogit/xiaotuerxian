@@ -37,6 +37,11 @@ const routes:RouteRecordRaw[] = [
     component:()=>import('@/views/Product/index.vue')
   },
   {
+    path:'/cart',
+    name:'cart',
+    component:()=>import('@/views/Cart/index.vue')
+  },
+  {
     path:'/',
     redirect:'/home'
   }

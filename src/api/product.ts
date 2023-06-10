@@ -36,7 +36,7 @@ export interface DetailsData {
 }
 export interface SkuData {
   id: string
-  inventory: 5996
+  inventory: number
   oldPrice: string
   price: string
   skuCode: string
@@ -51,7 +51,7 @@ export interface SpecsValuesData {
   desc: string
   name: string
   picture: string
-  selected?:boolean
+  selected?: boolean
 }
 export interface CommentHeadData {
   evaluateCount: number
@@ -94,6 +94,12 @@ export interface OrderInfoData {
     nameValue: string
   }>
 }
+type ReqCommentContentParams = {
+  page: number
+  pageSize: number
+  tag?: string
+  hasPicture?: boolean
+}
 export default {
   // 请求商品详情数据
   reqGoodsDetailData(goodsId: string) {
@@ -112,7 +118,16 @@ export default {
     return request.get<any, CommentHeadData>(`https://mock.boxuegu.com/mock/1175/goods/${goodsId}/evaluate`)
   },
   // 请求评论区内容数据
-  reqCommentContentData(goodsId: string) {
-    return request.get<any, CommentContentData>(`https://mock.boxuegu.com/mock/1175/goods/${goodsId}/evaluate/page?page=1&pageSize=10`)
-  }
+  reqCommentContentData(goodsId: string, type?:string|boolean) {
+    let params: ReqCommentContentParams = {
+      page: 1,
+      pageSize: 10,
+    }
+    if (type === true) {
+      params.hasPicture = type
+    } else {
+      params.tag = type as string
+    }
+    return request.get<any, CommentContentData>(`https://mock.boxuegu.com/mock/1175/goods/${goodsId}/evaluate/page`, { params })
+  },
 }

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+
 export interface LoginParams {
   account?: string
   password?: string
@@ -18,12 +19,13 @@ export interface UserInfo {
   provinceCode: string
   token: string
 }
+
 export default {
   reqLogin(loginParams: LoginParams) {
     if (loginParams.account) {
-      return request.post<any,UserInfo>('/login', loginParams)
+      return request.post<any, UserInfo>('/login', loginParams)
     } else {
-      return request.post<any,UserInfo>('/login/code', loginParams)
+      return request.post<any, UserInfo>('/login/code', loginParams)
     }
   }
 }

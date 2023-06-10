@@ -5,8 +5,10 @@
     <nav class="top">
       <div class="container">
         <ul>
-          <li><router-link class="first-a" to="/login">请先登录</router-link></li>
-          <li><a>免费注册</a></li>
+          <li v-show="!userInfo.account"><router-link class="first-a" to="/login">请先登录</router-link></li>
+          <li v-show="!userInfo.account"><a>免费注册</a></li>
+          <li v-show="userInfo.account"><a class="first-a">{{ userInfo.account }}</a></li>
+          <li v-show="userInfo.account" @click="logout"><a>退出登录</a></li>
           <li><a>我的订单</a></li>
           <li><a>会员中心</a></li>
           <li><a>帮助中心</a></li>
@@ -41,13 +43,14 @@
               <li>
                 <router-link to="/home">首页</router-link>
               </li>
-              <li v-for="nav in headerData" :key="nav.id" >
-                <a href="javascript:;" @click="toCategory(nav.id)">{{ nav.name }}</a>
+              <li v-for="nav in headerData" :key="nav.id">
+                <router-link :to="`/category/${nav.id}`">{{ nav.name }}</router-link>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
-                    <a href="javascript:;" @click="toCategorySub(navChildren.id)"><img :src="navChildren.picture" />
+                    <router-link :to="`/category/sub/${navChildren.id}`">
+                      <img :src="navChildren.picture" />
                       <p>{{ navChildren.name }}</p>
-                    </a>
+                    </router-link>
                   </li>
                 </ul>
               </li>
@@ -60,7 +63,50 @@
             <input type="text" placeholder="搜一搜">
           </div>
           <div class="shopCartIcon">
-            <i class="iconfont icongouwuche"></i>
+            <el-popover placement="bottom" :width="400" trigger="hover" popper-class="diy-popper">
+              <template #reference>
+                <el-badge :value="userStore.totalCount">
+                  <router-link to="/cart">
+                    <i class="iconfont icongouwuche"></i>
+                  </router-link>
+                </el-badge>
+              </template>
+              <div class="diy-popper-table">
+                <el-table :data="cartData" :show-header="false" @click="router.push('/cart')">
+                  <el-table-column width="80" property="img">
+                    <template v-slot="{ row }">
+                      <el-image style="width: 80px; height: 80px" :src="row.picture" fit="fill" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column width="193" property="desc">
+                    <template v-slot="{ row }">
+                      <p>{{ row.name }}</p>
+                      <p>{{ row.attrsText }}</p>
+                    </template>
+                  </el-table-column>
+                  <el-table-column width="97" property="price">
+                    <template v-slot="{ row }">
+                      <p style="color:#cf4444;text-align:center;" class="shopCartIcon-price">¥{{ row.price }}</p>
+                      <p style="text-align:center;" class="shopCartIcon-count">x{{ row.count }}</p>
+                    </template>
+                  </el-table-column>
+                  <el-table-column width="28.5">
+                    <template v-slot="{ row }">
+                      <el-icon @click="deleteCart(row.skuId)">
+                        <i-ep-close />
+                      </el-icon>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+              <div class="settle-accounts">
+                <div class="total-price">
+                  <p>共{{ userStore.totalCount }}件商品</p>
+                  <p>¥{{ userStore.totalPrice.toFixed(2) }}</p>
+                </div>
+                <router-link class="btn to-cart-btn" to="/cart">去购物车结算</router-link>
+              </div>
+            </el-popover>
           </div>
         </div>
       </div>
@@ -90,12 +136,13 @@
                 <router-link to="/home">首页</router-link>
               </li>
               <li class="middleNav-item" v-for="nav in headerData" :key="nav.id">
-                <a href="javascript:;" @click="toCategory(nav.id)">{{ nav.name }}</a>
+                <router-link :to="`/category/${nav.id}`">{{ nav.name }}</router-link>
                 <ul class="dropDownMenu">
                   <li v-for="navChildren in nav.children" :key="navChildren.id">
-                    <a href="javascript:;" @click="toCategorySub(navChildren.id)"><img :src="navChildren.picture" />
+                    <router-link :to="`/category/sub/${navChildren.id}`">
+                      <img :src="navChildren.picture" />
                       <p>{{ navChildren.name }}</p>
-                    </a>
+                    </router-link>
                   </li>
                 </ul>
               </li>
@@ -115,10 +162,15 @@
 import { ref, onMounted, watch } from "vue"
 import { useHeaderStore } from '@/store/header'
 import { storeToRefs } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
-import { HeaderListData } from '@/api/home'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/userInfo'
+import cartApi from '@/api/cart'
+const headerStore = useHeaderStore()
+const userStore = useUserStore()
+// 从store中获取数据
+let { headerData } = storeToRefs(headerStore)
+const { userInfo, cartData } = storeToRefs(userStore)
 const router = useRouter()
-const route = useRoute()
 // 控制固定导航显隐的参考值
 let isHidden = ref(true)
 // 控制头部导航加载状态的参考值
@@ -129,37 +181,43 @@ const getScollTop = () => {
   isHidden.value = top > 80 ? false : true
 }
 window.addEventListener('scroll', getScollTop)
-const headerStore = useHeaderStore()
-// 从store中获取headerData
-let { headerData } = storeToRefs(headerStore)
-onMounted(async () => {
+// 退出登录
+const logout = () => {
+  userStore.reset()
+  router.push('/login')
+}
+// 删除购物车
+const deleteCart = (skuId:string) => {
+  cartApi.reqDeleteCart([skuId]).then(() => {
+    userStore.getCartData().then(() => {
+      ElMessage.success('删除成功！')
+    })
+  }).catch((error) => {
+    ElMessage.error('删除失败，请稍后重试！')
+  })
+}
+onMounted(() => {
   // 请求获取头部数据
-  await headerStore.reqHeaderStoreData()
-  // 控制头部导航加载状态
-  mainNavLoading.value = false
+  headerStore.reqHeaderStoreData().then(() => {
+    // 控制头部导航加载状态
+    mainNavLoading.value = false
+  })
+  // 如果已经登录过，请求购物车的数据
+  if (userInfo.value.account) {
+    userStore.getCartData().catch(() => {
+      userStore.reset()
+      router.push('/login')
+    })
+  }
 })
-watch(()=>router.currentRoute.value.name,(newValue,oldValue)=>{
+watch(() => router.currentRoute.value.name, (newValue, oldValue) => {
   // 进到首页oldvalue是undefined，就不用发请求
-  if(oldValue !== undefined && newValue === 'home'){
+  if (oldValue !== undefined && newValue === 'home') {
     headerStore.reqHeaderStoreData()
   }
 })
-const toCategory = (id: string) => {
-  router.push({
-    name: 'category',
-    params: {
-      id
-    }
-  })
-}
-const toCategorySub = (id: string)=>{
-  router.push({
-    name:'sub',
-    params:{
-      id
-    }
-  })
-}
+
+
 </script>
 
 <style lang="less" scoped>
@@ -310,8 +368,14 @@ const toCategorySub = (id: string)=>{
         width: 32px;
         text-align: center;
 
+        a {
+          display: inline-block;
+          color: black;
+        }
+
         .icongouwuche {
           font-size: 24px;
+          cursor: pointer;
         }
       }
     }

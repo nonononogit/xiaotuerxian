@@ -135,7 +135,7 @@
                 <a href="javascript:;" @click="++addCartParams.count">+</a>
               </div>
             </div>
-            <button class="btn">加入购物车</button>
+            <button class="btn" @click="addCart">加入购物车</button>
           </div>
         </div>
       </template>
@@ -144,17 +144,18 @@
 </template>
 
 <script setup lang="ts">
-import { GoodsDetaiData, SpecsData, SpecsValuesData } from '@/api/product';
+import { SpecsData, SpecsValuesData } from '@/api/product';
 import { regionData } from 'element-china-area-data'
 import { computed, onMounted, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useProductStore } from '@/store/product';
 import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import * as _ from 'lodash'
 // 地址数据
 const options = ref(regionData)
 // 选择的地址数据
 const selectedOptions = ref()
-const goodsDetail = ref<GoodsDetaiData>()
 const defaultImg = ref('')
 const isMouseIn = ref(false)
 const glass = ref(HTMLDivElement.prototype)
@@ -166,7 +167,8 @@ const addCartParams = reactive({
 const route = useRoute()
 const productStore = useProductStore()
 const { goodsDetailData } = storeToRefs(productStore)
-const handleChange = () => {}
+const arr = ref<Array<{ name: string, valueName: string }>>([])
+const handleChange = () => { }
 // 鼠标移动到产品主图
 const mouseInMainImg = (e: MouseEvent) => {
   bigImg.value.style.backgroundImage = `url(${defaultImg.value})`
@@ -201,7 +203,39 @@ const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
     item.selected = false
   })
   values.selected = !values.selected
+  // 选择的商品属性是否重复
+  let isRepeat = arr.value?.some(item => {
+    if (item.name === specs.name && item.valueName === values.name) {
+      return true
+    }
+  })
+  // 如果时重复的直接return
+  if (isRepeat) return
+  // 如果不是重复的，找出商品规格索引
+  let index = arr.value?.findIndex(item => item.name === specs.name)
+  if (index === -1) {
+    // 如果找不到则说明该规格没有选择过，直接添加
+    arr.value.push({ name: specs.name, valueName: values.name })
+  } else {
+    // 如果可以找到，说明该规格选择过，但替换到之前的规格
+    arr.value.splice(index, 1, { name: specs.name, valueName: values.name })
+  }
+
 }
+// 点击加入购物车
+const addCart = _.debounce(()=>{
+  if(arr.value.length<goodsDetailData.value.specs.length){
+    ElMessage.warning('请选择完整规格')
+    return
+  }
+  const obj = goodsDetailData.value.skus.find(item=>{
+    return item.specs.every((item2,index)=>{
+      if(arr.value[index].name === item2.name&& arr.value[index].valueName === item2.valueName ){
+        return true
+      }
+    })
+  })
+},300)
 onMounted(async () => {
   const result = await productStore.getGoodsDetail(route.params.id as string)
   if (result === 'ok') {

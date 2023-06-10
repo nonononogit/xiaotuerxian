@@ -122,9 +122,9 @@ export const useProductStore = defineStore('product', {
         ElMessage.error('请求获取评价数据失败')
       }
     },
-    async getCommentContentData(goodsId: string) {
+    async getCommentContentData(goodsId: string,type?:string|boolean) {
       try {
-        const result = await productApi.reqCommentContentData(goodsId)
+        const result = await productApi.reqCommentContentData(goodsId,type)
         this.commentContentData = result
       } catch (error) {
         ElMessage.error('请求获取评价数据失败')

@@ -3,14 +3,14 @@ export default {
   account(value: string) {
     if (!value) return '请输入用户名'
     // 规则：字母开头6-20字符之间
-    if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
+    // if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
     return true
   },
   // 密码校验
   password(value: string) {
     if (!value) return '请输入密码'
     // 规则：密码格式6-24个字符
-    if (!/^\w{6,24}$/.test(value)) return '密码6-24个字符'
+    // if (!/^\w{6,24}$/.test(value)) return '密码6-24个字符'
     return true
   },
   mobile(value: string) {

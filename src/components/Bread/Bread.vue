@@ -1,15 +1,18 @@
 <script lang="ts">
+interface IVNode extends VNode {
+    type: {__name: string,displayName:string}
+}
 import { RendererElement, RendererNode, VNode, VNodeArrayChildren, h } from 'vue';
 export default {
   name: 'Bread',
   render() {
-    const items: any = this.$slots.default!()
+    const items = this.$slots.default!() as IVNode[]
     const dymanicItems: VNode<RendererNode, RendererElement, { [key: string]: any; }> | VNodeArrayChildren = []
-    items.forEach((item: any, i: any) => {
+    items.forEach((item: IVNode, index: number) => {
       // 对插槽节点进行判断（是BreadItem和Transition才进行组装）
       if (item.type.__name === 'BreadItem' || item.type.displayName === 'Transition') {
         dymanicItems.push(item)
-        if (i < (items.length - 1)) {
+        if (index < (items.length - 1)) {
           dymanicItems.push(h('i', { class: 'iconfont iconxiangyoujiantou' }))
         }
       }

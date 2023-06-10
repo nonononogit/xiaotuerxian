@@ -16,9 +16,14 @@
           大家都在说：
         </div>
         <ul class="tag">
-          <li class="active">全部评价（{{ commentHeadData.evaluateCount }}）</li>
-          <li>有图（{{ commentHeadData.hasPictureCount }}）</li>
-          <li v-for="tag in commentHeadData.tags" :key="tag.title">{{ `${tag.title}（${tag.tagCount}）` }}</li>
+          <li :class="{ active: commentActive === 'default' }" @click="filterComment('default')">全部评价（{{
+            commentHeadData.evaluateCount }}）</li>
+          <li :class="{ active: commentActive === true }" @click="filterComment(true)">有图（{{
+            commentHeadData.hasPictureCount
+          }}）</li>
+          <li :class="{ active: commentActive === tag.title }" @click="filterComment(tag.title)"
+            v-for="tag in commentHeadData.tags" :key="tag.title">{{
+              `${tag.title}（${tag.tagCount}）` }}</li>
         </ul>
       </div>
     </div>
@@ -41,13 +46,15 @@
             <span v-for="spesc in item.orderInfo?.specs" :key="spesc.name">{{ `${spesc.name}：${spesc.nameValue}` }}</span>
           </div>
           <p class="desc">{{ item.content }}</p>
-          <div v-if="!item.pictures.length">
+          <div v-if="item.pictures.length">
             <ul class="img-list">
-              <li class="active" v-for="pic in item.pictures" :key="pic"><img :src="pic" alt=""></li>
+              <li :class="{ active: bigImg === pic }" v-for="pic in item.pictures" :key="pic" @click="bigImg = pic">
+                <img :src="pic" alt="">
+              </li>
             </ul>
-            <div class="preview">
-              <i class="iconfont iconchacha"></i>
-              <img src="" alt="">
+            <div class="preview" v-if="bigImg">
+              <i class="iconfont iconchacha" @click="bigImg = ''"></i>
+              <img :src="bigImg" alt="">
             </div>
           </div>
           <div class="time">
@@ -63,16 +70,25 @@
 <script setup lang="ts">
 import { useProductStore } from '@/store/product';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { ref } from 'vue';
+const bigImg = ref('')
+const goodsId = ref('')
+const commentActive = ref<boolean | string>('default')
 const productStore = useProductStore()
 const { commentContentData, commentHeadData } = storeToRefs(productStore)
-const getCommentData = (goodsId: string) => {
-  productStore.getCommentHeadData(goodsId)
-  productStore.getCommentContentData(goodsId)
+const getCommentData = (id: string) => {
+  goodsId.value = id
+  productStore.getCommentHeadData(id)
+  productStore.getCommentContentData(id)
 }
-const stars = computed(()=>{
-  commentContentData.value.items.find(item=>item.score)
-})
+const filterComment = (type: boolean | string) => {
+  commentActive.value = type
+  if (type === 'default') {
+    productStore.getCommentContentData(goodsId.value)
+  } else {
+    productStore.getCommentContentData(goodsId.value, type)
+  }
+}
 defineExpose({
   getCommentData
 })
@@ -138,6 +154,12 @@ defineExpose({
           line-height: 40px;
           font-size: 14px;
           cursor: pointer;
+        }
+
+        li:hover {
+          color: #27ba9b;
+          border-color: #27ba9b;
+          background-color: #E6FAF6;
         }
 
         .active {
@@ -277,5 +299,4 @@ defineExpose({
       }
     }
   }
-}
-</style>
+}</style>

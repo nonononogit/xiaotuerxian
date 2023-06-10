@@ -38,10 +38,12 @@
         <h3>24小时热销榜</h3>
         <ul class="hot-goods">
           <li v-for="day in hotListData.day" :key="day.id">
-            <img :src="day.picture" alt="">
-            <p class="ellipsis">{{ day.name }}</p>
-            <p class="ellipsis">{{ day.desc }}</p>
-            <p>¥{{ day.price }}</p>
+            <router-link :to="`/product/${day.id}`">
+              <img :src="day.picture" alt="">
+              <p class="ellipsis">{{ day.name }}</p>
+              <p class="ellipsis">{{ day.desc }}</p>
+              <p>¥{{ day.price }}</p>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -49,10 +51,12 @@
         <h3>周热销榜</h3>
         <ul class="hot-goods">
           <li v-for="week in hotListData.week" :key="week.id">
-            <img :src="week.picture" alt="">
-            <p class="ellipsis">{{ week.name }}</p>
-            <p class="ellipsis">{{ week.desc }}</p>
-            <p>¥{{ week.price }}</p>
+            <router-link :to="`/product/${week.id}`">
+              <img :src="week.picture" alt="">
+              <p class="ellipsis">{{ week.name }}</p>
+              <p class="ellipsis">{{ week.desc }}</p>
+              <p>¥{{ week.price }}</p>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -69,7 +73,7 @@ import { onMounted, ref, nextTick } from 'vue';
 const showDetail = ref(true)
 const props = defineProps(['goodsId'])
 const productStore = useProductStore()
-const { hotListData,goodsDetailData } = storeToRefs(productStore)
+const { hotListData, goodsDetailData } = storeToRefs(productStore)
 const commentRef = ref<InstanceType<typeof ProductComment>>()
 // 点击商品评价
 const showComment = () => {
@@ -211,7 +215,9 @@ onMounted(() => {
         margin-bottom: 10px;
         text-align: center;
         background-color: white;
-
+        a{
+          color: black;
+        }
         img {
           width: 200px;
           height: 200px;

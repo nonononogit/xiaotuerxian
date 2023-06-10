@@ -2,35 +2,44 @@
   <div class="kind-container">
     <div class="title">
       <i class="icon"></i>
-      <span>同类商品推荐</span>
+      <span v-if="props.goodsId">同类商品推荐</span>
+      <span v-else>猜你喜欢</span>
     </div>
     <div class="content">
       <ul class="product-list" :class="{ fade: kindListIndex === 1 }">
         <li class="product-centent" v-for="item in kindItem1Data" :key="item.id">
-          <img :src="item.picture" alt="">
-          <p class="ellipsis">{{ item.name }}</p>
-          <p>{{ item.price }}</p>
+          <router-link :to="`/product/${item.id}`">
+            <img :src="item.picture" alt="">
+            <p class="ellipsis">{{ item.name }}</p>
+            <p>¥{{ item.price }}</p>
+          </router-link>
         </li>
       </ul>
       <ul class="product-list" :class="{ fade: kindListIndex === 2 }">
         <li class="product-centent" v-for="item in kindItem2Data" :key="item.id">
-          <img :src="item.picture" alt="">
-          <p class="ellipsis">{{ item.name }}</p>
-          <p>{{ item.price }}</p>
+          <router-link :to="`/product/${item.id}`">
+            <img :src="item.picture" alt="">
+            <p class="ellipsis">{{ item.name }}</p>
+            <p>¥{{ item.price }}</p>
+          </router-link>
         </li>
       </ul>
       <ul class="product-list" :class="{ fade: kindListIndex === 3 }">
         <li class="product-centent" v-for="item in kindItem3Data" :key="item.id">
-          <img :src="item.picture" alt="">
-          <p class="ellipsis">{{ item.name }}</p>
-          <p>{{ item.price }}</p>
+          <router-link :to="`/product/${item.id}`">
+            <img :src="item.picture" alt="">
+            <p class="ellipsis">{{ item.name }}</p>
+            <p>¥{{ item.price }}</p>
+          </router-link>
         </li>
       </ul>
       <ul class="product-list" :class="{ fade: kindListIndex === 4 }">
         <li class="product-centent" v-for="item in kindItem4Data" :key="item.id">
-          <img :src="item.picture" alt="">
-          <p class="ellipsis">{{ item.name }}</p>
-          <p>{{ item.price }}</p>
+          <router-link :to="`/product/${item.id}`">
+            <img :src="item.picture" alt="">
+            <p class="ellipsis">{{ item.name }}</p>
+            <p>¥{{ item.price }}</p>
+          </router-link>
         </li>
       </ul>
 
@@ -130,7 +139,9 @@ onMounted(() => {
         text-align: center;
         width: 240px;
         cursor: pointer;
-
+        a{
+          color: black;
+        }
         img {
           padding: 20px;
           width: 230px;
