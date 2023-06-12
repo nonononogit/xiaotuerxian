@@ -31,12 +31,12 @@
     <ul class="category-list" v-infinite-scroll="temporaryLoad" :infinite-scroll-disabled="stopRequestTemporary"
       >
       <li v-for="goods in temporaryData.items" :key="goods.id" ref="target" v-loading="loading">
-        <a href="javascript:;">
+        <router-link :to="`/product/${goods.id}`">
           <img :src="goods.picture" alt="">
           <p>{{ goods.name }}</p>
           <p>{{ goods.desc }}</p>
           <p>￥{{ goods.price }}</p>
-        </a>
+        </router-link>
       </li>
     </ul>
     <div class="none" v-if="!state">

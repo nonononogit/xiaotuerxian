@@ -44,9 +44,9 @@ export const useUserStore = defineStore('user', {
         ElMessage.error(error.response.data.message)
       }
     },
-    async getCartData() {
-      const result = await cartApi.reqCart()
-      this.cartData = result
+    async getCartData(addCartParams?: { count: number; skuId: string } | undefined) {
+      const result = await cartApi.reqCart(addCartParams)
+      if(!addCartParams) this.cartData = result
       localStorage.setItem('userKey', JSON.stringify(this.$state))
     },
     reset() {
@@ -57,23 +57,23 @@ export const useUserStore = defineStore('user', {
   },
   getters: {
     totalPrice: (state) => {
-      return state.cartData.reduce((prev, item) => {
+      return state.cartData?.reduce((prev, item) => {
         return prev += Number(item.price) * (item.count as number)
       }, 0)
     },
     totalCount: (state) => {
-      return state.cartData.reduce((prev, item) => {
+      return state.cartData?.reduce((prev, item) => {
         return prev += (item.count as number)
       }, 0)
     },
     totalSelectPrice: (state) => {
-      return state.cartData.reduce((prev, item) => {
+      return state.cartData?.reduce((prev, item) => {
         if (item.selected) prev += Number(item.price) * (item.count as number)
         return prev
       }, 0)
     },
     totalSelectCount: (state) => {
-      return state.cartData.reduce((prev, item) => {
+      return state.cartData?.reduce((prev, item) => {
         if (item.selected) prev += (item.count as number)
         return prev
       }, 0)

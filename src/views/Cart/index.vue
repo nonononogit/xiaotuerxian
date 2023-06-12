@@ -38,31 +38,21 @@
                       <span class="attr-span ellipsis">{{ cart.attrsText }}</span>
                       <i class="attr-icon iconfont iconxiangxiajiantou"></i>
                     </div>
-                    <div class="hide-attr" v-loading="loading" v-if="showAttr === cart.skuId" v-on-click-outside.bubble="dropdownHandler">
+                    <div class="hide-attr" v-loading="loading" v-if="showAttr === cart.skuId"
+                      v-on-click-outside.bubble="dropdownHandler">
                       <div class="sku">
-                        <dl>
-                          <dt>钻石颜色</dt>
+                        <!-- <dl v-for="specs in cartAttrSkus.specs">
+                          <dt>{{ specs.name }}</dt>
                           <dd>
-                            <span class="select">F-G</span>
-                            <span>I-J</span>
+                            <template v-for="value in specs.values" :key="value.name">
+                              <span class="select" v-if="!value.picture">{{ value.name }}</span>
+                              <img class="select" v-else style="width: 50px; height: 50px" :src="value.picture" />
+                            </template>
                           </dd>
-                        </dl>
-                        <dl>
-                          <dt>钻石净度</dt>
-                          <dd>
-                            <span>F-G</span>
-                            <span>I-J</span>
-                          </dd>
-                        </dl>
-                        <dl>
-                          <dt>戒圈大小</dt>
-                          <dd>
-                            <span>F-G</span>
-                            <span>I-J</span>
-                          </dd>
-                        </dl>
+                        </dl> -->
+                        <GoodsSku :goods="cartAttrSkus"></GoodsSku>
                       </div>
-                      <button>确认</button>
+                      <button v-if="!loading">确认</button>
                     </div>
                   </div>
                 </div>
@@ -136,7 +126,9 @@ const userStore = useUserStore()
 const { cartData } = storeToRefs(userStore)
 const showAttr = ref('')
 const cartStore = useCartStore()
-const loading = ref(true)
+const { cartAttrSkus } = storeToRefs(cartStore)
+
+const loading = ref(false)
 
 const selectAll = () => {
   if (!isSelectAll.value) {
@@ -185,6 +177,11 @@ const selectAttr = (skuId: string) => {
     showAttr.value = ''
     return
   } else {
+    cartAttrSkus.value = {
+      skus: [],
+      specs: []
+    }
+    loading.value = true
     showAttr.value = skuId
     cartStore.getCartAttrSkus(skuId).then(() => {
       loading.value = false
@@ -314,6 +311,7 @@ const isSelectAll = computed(() => {
 
           dl {
             display: flex;
+            flex-wrap: wrap;
             padding-bottom: 10px;
             align-items: center;
 
@@ -339,6 +337,15 @@ const isSelectAll = computed(() => {
                 cursor: pointer;
               }
 
+              img {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 5px;
+                border: 1px solid #e4e4e4;
+                margin-right: 10px;
+                cursor: pointer;
+              }
+
               .select {
                 border-color: #27ba9b;
               }
@@ -352,6 +359,12 @@ const isSelectAll = computed(() => {
           width: 60px;
           height: 32px;
           font-size: 14px;
+          line-height: 32px;
+          color: white;
+          background: #27ba9b;
+          text-align: center;
+          border: 1px solid #27ba9b;
+          border-radius: 4px;
         }
       }
     }

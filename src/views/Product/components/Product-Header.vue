@@ -114,7 +114,7 @@
               </dl>
             </div>
             <div class="sku-container">
-              <dl class="sku" v-for="specs in goodsDetailData?.specs" :key="specs.name">
+              <!-- <dl class="sku" v-for="specs in goodsDetailData?.specs" :key="specs.name">
                 <dt>{{ specs.name }}</dt>
                 <dd>
                   <template v-for="values in specs.values" :key="values.name">
@@ -124,7 +124,8 @@
                     }}</span>
                   </template>
                 </dd>
-              </dl>
+              </dl> -->
+              <GoodsSku @changeAttr="changeAttr" :goods="goodsDetailData"></GoodsSku>
             </div>
             <div class="count">
               <p>数量</p>
@@ -151,6 +152,7 @@ import { storeToRefs } from 'pinia';
 import { useProductStore } from '@/store/product';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
+import {useUserStore} from '@/store/userInfo'
 import * as _ from 'lodash'
 // 地址数据
 const options = ref(regionData)
@@ -164,6 +166,7 @@ const addCartParams = reactive({
   count: 1,
   skuId: ''
 })
+const userStore = useUserStore()
 const route = useRoute()
 const productStore = useProductStore()
 const { goodsDetailData } = storeToRefs(productStore)
@@ -195,8 +198,10 @@ const mouseInPreview = (img: string) => {
 }
 // 点击选择商品属性
 const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
+  let index = arr.value?.findIndex(item => item.name === specs.name)
   if (values.selected) {
     values.selected = false
+    arr.value.splice(index, 1)
     return
   }
   specs.values.forEach(item => {
@@ -212,7 +217,6 @@ const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
   // 如果时重复的直接return
   if (isRepeat) return
   // 如果不是重复的，找出商品规格索引
-  let index = arr.value?.findIndex(item => item.name === specs.name)
   if (index === -1) {
     // 如果找不到则说明该规格没有选择过，直接添加
     arr.value.push({ name: specs.name, valueName: values.name })
@@ -235,6 +239,11 @@ const addCart = _.debounce(()=>{
       }
     })
   })
+  addCartParams.skuId = obj?.skuCode as string
+  userStore.getCartData(addCartParams).then(()=>{
+    ElMessage.success('添加购物车成功!')
+    userStore.getCartData()
+  })
 },300)
 onMounted(async () => {
   const result = await productStore.getGoodsDetail(route.params.id as string)
@@ -250,6 +259,9 @@ onMounted(async () => {
 const categories = computed(() => {
   return goodsDetailData.value?.categories.find((item: any) => item.layer === 2)
 })
+const changeAttr = (value:Array<{ name: string, valueName: string }>)=>{
+  arr.value = value
+}
 </script>
 
 <style lang="less" scoped>
@@ -462,7 +474,7 @@ const categories = computed(() => {
 
         dd {
           cursor: pointer;
-
+          line-height: 40px;
           img {
             width: 50px;
             height: 50px;

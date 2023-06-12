@@ -78,19 +78,19 @@
                       <el-image style="width: 80px; height: 80px" :src="row.picture" fit="fill" />
                     </template>
                   </el-table-column>
-                  <el-table-column width="193" property="desc">
+                  <el-table-column width="200" property="desc">
                     <template v-slot="{ row }">
                       <p>{{ row.name }}</p>
                       <p>{{ row.attrsText }}</p>
                     </template>
                   </el-table-column>
-                  <el-table-column width="97" property="price">
+                  <el-table-column width="80" property="price">
                     <template v-slot="{ row }">
                       <p style="color:#cf4444;text-align:center;" class="shopCartIcon-price">¥{{ row.price }}</p>
                       <p style="text-align:center;" class="shopCartIcon-count">x{{ row.count }}</p>
                     </template>
                   </el-table-column>
-                  <el-table-column width="28.5">
+                  <el-table-column width="25">
                     <template v-slot="{ row }">
                       <el-icon @click="deleteCart(row.skuId)">
                         <i-ep-close />
@@ -290,7 +290,7 @@ watch(() => router.currentRoute.value.name, (newValue, oldValue) => {
         line-height: 32px;
 
         a {
-          color: #33336e;
+          color: black;
         }
 
         a:hover {

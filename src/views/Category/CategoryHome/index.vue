@@ -1,6 +1,6 @@
 <template>
   <Bread>
-    <BreadItem :to="`/home`">首页</BreadItem> 
+    <BreadItem :to="`/home`">首页</BreadItem>
     <Transition name="crumbs" mode="out-in">
       <BreadItem :key="categoryData.id">{{ categoryData.name }}</BreadItem>
     </Transition>
@@ -23,19 +23,19 @@
     <p class="describe">温暖柔软，品质之选</p>
     <ul class="category-list">
       <li v-for="goods in category.goods" :key="goods.id">
-        <a href="javascript:;">
+        <router-link :to="`/product/${goods.id}`">
           <img :src="goods.picture" alt="">
           <p>{{ goods.desc }}</p>
           <p>{{ goods.name }}</p>
           <p>￥{{ goods.price }}</p>
-        </a>
+        </router-link>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted} from 'vue';
+import { onMounted } from 'vue';
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
@@ -201,5 +201,4 @@ h3 {
   text-align: center;
   line-height: 100px;
 }
-
 </style>
