@@ -259,6 +259,7 @@ onMounted(async () => {
 const categories = computed(() => {
   return goodsDetailData.value?.categories.find((item: any) => item.layer === 2)
 })
+// 接收子组件选择好的商品属性数组
 const changeAttr = (value:Array<{ name: string, valueName: string }>)=>{
   arr.value = value
 }

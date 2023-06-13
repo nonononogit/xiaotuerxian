@@ -13,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { SpecsData, SpecsValuesData } from '@/api/product'
-const props = defineProps(['goods'])
+import { SkuData, SpecsData, SpecsValuesData } from '@/api/product'
+const props = defineProps(['goods', 'skuId','attrsText'])
 const emit = defineEmits(['changeAttr'])
 const arr = ref<Array<{ name: string, valueName: string }>>([])
 // 点击选择商品属性
@@ -47,50 +47,66 @@ const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
   }
   changeAttr()
 }
+// 找到默认选中的属性
+watch(() => [props.goods.specs], () => {
+  if(props.goods.skus?.length){
+    arr.value = props.goods.skus.find((item:SkuData)=>item.skuCode == props.skuId).specs
+    changeAttr()
+  }
+  if (props.attrsText) {
+    props.goods.specs.forEach((item: SpecsData) => {
+      item.values.forEach((item2: SpecsValuesData) => {
+        if (props.attrsText.includes(item2.name)) {
+          item2.selected = true
+        }
+      })
+    })
+  }
+}, { immediate: true })
+
 // 传给父组件选好的属性
 const changeAttr = () => {
-  emit('changeAttr',arr.value)
+  emit('changeAttr', arr.value)
 }
 </script>
 
 <style lang="less" scoped>
-  .sku {
-    display: flex;
-    align-items: center;
-    padding: 0 0 10px 0px;
-    color: #999;
+.sku {
+  display: flex;
+  align-items: center;
+  padding: 0 0 10px 0px;
+  color: #999;
 
-    dt {
-      width: 50px;
-    }
-
-    dd {
-      flex: 1;
-      line-height: 40px;
-
-      img {
-        width: 50px;
-        height: 50px;
-        margin: 0 10px 5px 0;
-        border: 1px solid #e4e4e4;
-        cursor: pointer;
-      }
-
-      .active {
-        border: 1px solid #27ba9b;
-      }
-
-      span {
-        display: inline-block;
-        height: 30px;
-        line-height: 28px;
-        padding: 0 20px;
-        border: 1px solid #e4e4e4;
-        margin-right: 10px;
-        user-select: none;
-        cursor: pointer;
-      }
-    }
+  dt {
+    width: 50px;
   }
 
+  dd {
+    flex: 1;
+    line-height: 40px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      margin: 0 10px 5px 0;
+      border: 1px solid #e4e4e4;
+      cursor: pointer;
+    }
+
+    .active {
+      border: 1px solid #27ba9b;
+    }
+
+    span {
+      display: inline-block;
+      height: 30px;
+      line-height: 28px;
+      padding: 0 20px;
+      border: 1px solid #e4e4e4;
+      margin-right: 10px;
+      user-select: none;
+      cursor: pointer;
+    }
+  }
+}
 </style>

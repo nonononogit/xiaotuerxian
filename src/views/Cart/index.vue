@@ -50,9 +50,9 @@
                             </template>
                           </dd>
                         </dl> -->
-                        <GoodsSku :goods="cartAttrSkus"></GoodsSku>
+                        <GoodsSku @changeAttr="updateAttr" :goods="cartAttrSkus" :skuId="cart.skuId" :attrsText="cart.attrsText"></GoodsSku>
                       </div>
-                      <button v-if="!loading">确认</button>
+                      <button v-if="!loading" @click="changeAttr(cart)">确认</button>
                     </div>
                   </div>
                 </div>
@@ -67,7 +67,6 @@
                 <input type="text" readonly v-model="cart.count">
                 <a href="javascript:;" @click="(cart.count as number)++">+</a>
               </div>
-
             </td>
             <td style="font-size:16px;color:#CF4444;">
               ¥{{ (Number(cart.price) * Number(cart.count)).toFixed(2) }}
@@ -118,18 +117,19 @@ import ProductKind from '../Product/components/Product-Kind.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useUserStore } from '@/store/userInfo';
 import { storeToRefs } from 'pinia';
-import cartApi from '@/api/cart'
+import cartApi, { Cart } from '@/api/cart'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useCartStore } from '@/store/cart';
 import { vOnClickOutside } from '@vueuse/components'
+import { SpecsData, SpecsValuesData } from '@/api/product';
+import _ from 'lodash';
 const userStore = useUserStore()
 const { cartData } = storeToRefs(userStore)
 const showAttr = ref('')
 const cartStore = useCartStore()
 const { cartAttrSkus } = storeToRefs(cartStore)
-
 const loading = ref(false)
-
+const arr = ref<Array<{ name: string, valueName: string }>>([])
 const selectAll = () => {
   if (!isSelectAll.value) {
     cartData.value.forEach(item => {
@@ -191,9 +191,33 @@ const selectAttr = (skuId: string) => {
 const dropdownHandler = (event: any) => {
   showAttr.value = ''
 }
-onMounted(() => {
-
+// 接收子组件选择好的商品属性数组
+const updateAttr = (value: Array<{ name: string, valueName: string }>) => {
+  arr.value = value
+}
+const addCartParams = reactive({
+  count: 1,
+  skuId: ''
 })
+// 点击选择商品属性
+const changeAttr = _.debounce((cart: Cart) => {
+  if (arr.value.length < cartAttrSkus.value.specs.length) return
+  const obj = cartAttrSkus.value.skus.find(item => {
+    return item.specs.every((item2, index) => {
+      if (arr.value[index].name === item2.name && arr.value[index].valueName === item2.valueName) {
+        return true
+      }
+    })
+  })
+  addCartParams.skuId = obj?.skuCode as string
+  addCartParams.count = cart.count as number
+  cartApi.reqDeleteCart([cart.skuId]).then(() => {
+    userStore.getCartData(addCartParams).then(() => {
+      userStore.getCartData()
+    })
+  })
+
+}, 300)
 
 
 const isSelectAll = computed(() => {
