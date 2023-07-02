@@ -41,15 +41,6 @@
                     <div class="hide-attr" v-loading="loading" v-if="showAttr === cart.skuId"
                       v-on-click-outside.bubble="dropdownHandler">
                       <div class="sku">
-                        <!-- <dl v-for="specs in cartAttrSkus.specs">
-                          <dt>{{ specs.name }}</dt>
-                          <dd>
-                            <template v-for="value in specs.values" :key="value.name">
-                              <span class="select" v-if="!value.picture">{{ value.name }}</span>
-                              <img class="select" v-else style="width: 50px; height: 50px" :src="value.picture" />
-                            </template>
-                          </dd>
-                        </dl> -->
                         <GoodsSku @changeAttr="updateAttr" :goods="cartAttrSkus" :skuId="cart.skuId" :attrsText="cart.attrsText"></GoodsSku>
                       </div>
                       <button v-if="!loading" @click="changeAttr(cart)">确认</button>
@@ -106,7 +97,7 @@
         共 {{ userStore.totalCount }} 件商品，已选择 {{ userStore.totalSelectCount }} 件，商品合计：
         <span>¥{{ userStore.totalSelectPrice.toFixed(2) ? userStore.totalSelectPrice.toFixed(2) : 0 }}</span>
       </p>
-      <button>下单结算</button>
+      <router-link to="/member/checkout">下单结算</router-link>
     </div>
     <ProductKind></ProductKind>
   </div>
@@ -121,7 +112,6 @@ import cartApi, { Cart } from '@/api/cart'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useCartStore } from '@/store/cart';
 import { vOnClickOutside } from '@vueuse/components'
-import { SpecsData, SpecsValuesData } from '@/api/product';
 import _ from 'lodash';
 const userStore = useUserStore()
 const { cartData } = storeToRefs(userStore)
@@ -187,6 +177,7 @@ const selectAttr = (skuId: string) => {
       loading.value = false
     })
   }
+  
 }
 const dropdownHandler = (event: any) => {
   showAttr.value = ''
@@ -199,7 +190,7 @@ const addCartParams = reactive({
   count: 1,
   skuId: ''
 })
-// 点击选择商品属性
+// 点击确认选择商品属性
 const changeAttr = _.debounce((cart: Cart) => {
   if (arr.value.length < cartAttrSkus.value.specs.length) return
   const obj = cartAttrSkus.value.skus.find(item => {
@@ -504,9 +495,10 @@ const isSelectAll = computed(() => {
     }
   }
 
-  button {
+  a {
     width: 180px;
     height: 50px;
+    line-height: 50px;
     font-size: 16px;
     border: none;
     text-align: center;

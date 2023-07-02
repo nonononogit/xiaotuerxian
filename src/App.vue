@@ -19,6 +19,7 @@ const key = computed(() => {
 <style lang="less">
 .diy-popper {
   padding: 0 !important;
+
   .diy-popper-table {
     height: 310px;
     overflow: auto;

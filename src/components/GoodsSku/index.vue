@@ -1,5 +1,5 @@
 <template>
-  <dl class="sku" v-for="specs in goods?.specs" :key="specs.name">
+  <dl class="sku" v-for="specs in goodsList?.specs" :key="specs.name">
     <dt>{{ specs.name }}</dt>
     <dd>
       <template v-for="values in specs.values" :key="values.name">
@@ -17,6 +17,7 @@ import { SkuData, SpecsData, SpecsValuesData } from '@/api/product'
 const props = defineProps(['goods', 'skuId','attrsText'])
 const emit = defineEmits(['changeAttr'])
 const arr = ref<Array<{ name: string, valueName: string }>>([])
+const goodsList = props.goods
 // 点击选择商品属性
 const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
   let index = arr.value?.findIndex(item => item.name === specs.name)
@@ -35,7 +36,7 @@ const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
       return true
     }
   })
-  // 如果时重复的直接return
+  // 如果是重复的直接return
   if (isRepeat) return
   // 如果不是重复的，找出商品规格索引
   if (index === -1) {
@@ -48,21 +49,22 @@ const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
   changeAttr()
 }
 // 找到默认选中的属性
-watch(() => [props.goods.specs], () => {
+watch(() => [props.goods?.specs], () => {
   if(props.goods.skus?.length){
-    arr.value = props.goods.skus.find((item:SkuData)=>item.skuCode == props.skuId).specs
+    // 不能直接赋值，因为在上面点击确定的时候，会对数组里的对象有修改操作，导致原始数据也变化
+    arr.value = [...props.goods.skus.find((item:SkuData)=>item.skuCode == props.skuId)?.specs]
     changeAttr()
   }
-  if (props.attrsText) {
-    props.goods.specs.forEach((item: SpecsData) => {
+  if (goodsList.attrsText) {
+    goodsList.goods.specs.forEach((item: SpecsData) => {
       item.values.forEach((item2: SpecsValuesData) => {
-        if (props.attrsText.includes(item2.name)) {
+        if (goodsList.attrsText.includes(item2.name)) {
           item2.selected = true
         }
       })
     })
   }
-}, { immediate: true })
+},)
 
 // 传给父组件选好的属性
 const changeAttr = () => {

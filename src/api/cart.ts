@@ -28,11 +28,12 @@ interface AddCartParams {
   count: number
   skuId: string
 }
+
 export default {
-  reqCart(addCartParams?:AddCartParams) {
-    if(addCartParams){
-      return request.post<any, CartData>('/member/cart',addCartParams)
-    }else{
+  reqCart(addCartParams?: AddCartParams) {
+    if (addCartParams) {
+      return request.post<any, CartData>('/member/cart', addCartParams)
+    } else {
       return request.get<any, CartData>('/member/cart')
     }
   },
@@ -41,5 +42,6 @@ export default {
   },
   reqGoodsSku(skuId: string) {
     return request.get<any, CartAttrSkusData>('/goods/sku/' + skuId)
-  }
+  },
+
 }

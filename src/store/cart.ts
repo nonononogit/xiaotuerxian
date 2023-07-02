@@ -10,7 +10,7 @@ export const useCartStore = defineStore('cart', {
       cartAttrSkus:{
         skus:[],
         specs:[]
-      }
+      },
     }
   },
   actions: {
@@ -21,7 +21,7 @@ export const useCartStore = defineStore('cart', {
       } catch (error) {
         ElMessage.error('请求获取购物车商品属性失败')
       }
-    }
+    },
   },
   getters: {
   }

@@ -39,7 +39,19 @@ const routes:RouteRecordRaw[] = [
   {
     path:'/cart',
     name:'cart',
-    component:()=>import('@/views/Cart/index.vue')
+    component:()=>import('@/views/Cart/index.vue'),
+  },
+  {
+    path:'/member',
+    name:'member',
+    component:()=>import('@/views/Member/index.vue'),
+    children:[
+      {
+        path:'checkout',
+        name:'checkout',
+        component:()=>import('@/views/Member/Checkout/index.vue')
+      }
+    ]
   },
   {
     path:'/',

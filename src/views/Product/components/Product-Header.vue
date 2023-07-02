@@ -8,6 +8,7 @@
         <BreadItem :key="goodsDetailData.id">{{ goodsDetailData.name }}</BreadItem>
       </Transition>
     </Bread>
+    <BreadCrumb :breadItemList="breadItemList"></BreadCrumb>
     <el-skeleton :loading="!defaultImg" animated>
       <!-- 暂无数据时的骨架模板 -->
       <template #template>
@@ -99,8 +100,10 @@
               <dl>
                 <dt>配送</dt>
                 <dd>至
-                  <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange">
-                  </el-cascader>
+                  <AddressOptions></AddressOptions>
+                  <!-- <el-cascader placeholder="请选择配送地区" size="large" :options="options" v-model="selectedOptions"
+                    @change="handleChange">
+                  </el-cascader> -->
                 </dd>
               </dl>
               <dl>
@@ -114,17 +117,6 @@
               </dl>
             </div>
             <div class="sku-container">
-              <!-- <dl class="sku" v-for="specs in goodsDetailData?.specs" :key="specs.name">
-                <dt>{{ specs.name }}</dt>
-                <dd>
-                  <template v-for="values in specs.values" :key="values.name">
-                    <img :class="{ active: values.selected }" v-if="values.picture" :src="values.picture"
-                      :alt="values.name" @click="selectAttr(specs, values)">
-                    <span :class="{ active: values.selected }" v-else @click="selectAttr(specs, values)">{{ values.name
-                    }}</span>
-                  </template>
-                </dd>
-              </dl> -->
               <GoodsSku @changeAttr="changeAttr" :goods="goodsDetailData"></GoodsSku>
             </div>
             <div class="count">
@@ -145,15 +137,16 @@
 </template>
 
 <script setup lang="ts">
-import { SpecsData, SpecsValuesData } from '@/api/product';
 import { regionData } from 'element-china-area-data'
 import { computed, onMounted, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useProductStore } from '@/store/product';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import {useUserStore} from '@/store/userInfo'
+import { useUserStore } from '@/store/userInfo'
 import * as _ from 'lodash'
+import type { BreadItem } from '@/types/BreadItem';
+import { GoodsDetaiData } from '@/api/product';
 // 地址数据
 const options = ref(regionData)
 // 选择的地址数据
@@ -197,54 +190,78 @@ const mouseInPreview = (img: string) => {
   defaultImg.value = img
 }
 // 点击选择商品属性
-const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
-  let index = arr.value?.findIndex(item => item.name === specs.name)
-  if (values.selected) {
-    values.selected = false
-    arr.value.splice(index, 1)
-    return
-  }
-  specs.values.forEach(item => {
-    item.selected = false
-  })
-  values.selected = !values.selected
-  // 选择的商品属性是否重复
-  let isRepeat = arr.value?.some(item => {
-    if (item.name === specs.name && item.valueName === values.name) {
-      return true
-    }
-  })
-  // 如果时重复的直接return
-  if (isRepeat) return
-  // 如果不是重复的，找出商品规格索引
-  if (index === -1) {
-    // 如果找不到则说明该规格没有选择过，直接添加
-    arr.value.push({ name: specs.name, valueName: values.name })
-  } else {
-    // 如果可以找到，说明该规格选择过，但替换到之前的规格
-    arr.value.splice(index, 1, { name: specs.name, valueName: values.name })
-  }
+// const selectAttr = (specs: SpecsData, values: SpecsValuesData) => {
+//   let index = arr.value?.findIndex(item => item.name === specs.name)
+//   if (values.selected) {
+//     values.selected = false
+//     arr.value.splice(index, 1)
+//     return
+//   }
+//   specs.values.forEach(item => {
+//     item.selected = false
+//   })
+//   values.selected = !values.selected
+//   // 选择的商品属性是否重复
+//   let isRepeat = arr.value?.some(item => {
+//     if (item.name === specs.name && item.valueName === values.name) {
+//       return true
+//     }
+//   })
+//   // 如果时重复的直接return
+//   if (isRepeat) return
+//   // 如果不是重复的，找出商品规格索引
+//   if (index === -1) {
+//     // 如果找不到则说明该规格没有选择过，直接添加
+//     arr.value.push({ name: specs.name, valueName: values.name })
+//   } else {
+//     // 如果可以找到，说明该规格选择过，但替换到之前的规格
+//     arr.value.splice(index, 1, { name: specs.name, valueName: values.name })
+//   }
 
-}
+// }
+
 // 点击加入购物车
-const addCart = _.debounce(()=>{
-  if(arr.value.length<goodsDetailData.value.specs.length){
+const addCart = _.debounce(() => {
+  if (arr.value.length < goodsDetailData.value.specs.length) {
     ElMessage.warning('请选择完整规格')
     return
   }
-  const obj = goodsDetailData.value.skus.find(item=>{
-    return item.specs.every((item2,index)=>{
-      if(arr.value[index].name === item2.name&& arr.value[index].valueName === item2.valueName ){
+  const obj = goodsDetailData.value.skus.find(item => {
+    return item.specs.every((item2, index) => {
+      if (arr.value[index].name === item2.name && arr.value[index].valueName === item2.valueName) {
         return true
       }
     })
   })
   addCartParams.skuId = obj?.skuCode as string
-  userStore.getCartData(addCartParams).then(()=>{
+  userStore.getCartData(addCartParams).then(() => {
     ElMessage.success('添加购物车成功!')
     userStore.getCartData()
   })
-},300)
+}, 300)
+const breadItemList = ref<Array<BreadItem>>([])
+const getBreadItemData = (goodsDetailData: GoodsDetaiData) => {
+  let arr = goodsDetailData.categories.map(item => {
+    return {
+      layer: item.layer,
+      id: item.id,
+      title: item.name,
+      path: ''
+    }
+  })
+  arr.sort((a, b) => a.layer - b.layer)
+  let pathArr = ['/category', '/category/sub']
+  pathArr.forEach((item, index) => {
+    arr[index].path = item
+  })
+  arr.push({
+    path: '',
+    id: goodsDetailData.id,
+    title: goodsDetailData.name,
+    layer: 3
+  })
+  breadItemList.value = arr
+}
 onMounted(async () => {
   const result = await productStore.getGoodsDetail(route.params.id as string)
   if (result === 'ok') {
@@ -253,6 +270,7 @@ onMounted(async () => {
         item2.selected = false
       })
     })
+    getBreadItemData(goodsDetailData.value)
     defaultImg.value = goodsDetailData?.value.mainPictures[0]
   }
 })
@@ -260,7 +278,7 @@ const categories = computed(() => {
   return goodsDetailData.value?.categories.find((item: any) => item.layer === 2)
 })
 // 接收子组件选择好的商品属性数组
-const changeAttr = (value:Array<{ name: string, valueName: string }>)=>{
+const changeAttr = (value: Array<{ name: string, valueName: string }>) => {
   arr.value = value
 }
 </script>
@@ -476,6 +494,7 @@ const changeAttr = (value:Array<{ name: string, valueName: string }>)=>{
         dd {
           cursor: pointer;
           line-height: 40px;
+
           img {
             width: 50px;
             height: 50px;

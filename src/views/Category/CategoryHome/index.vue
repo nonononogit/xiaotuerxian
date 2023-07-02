@@ -1,44 +1,54 @@
 <template>
-  <Bread>
+  <!-- <Bread>
     <BreadItem :to="`/home`">首页</BreadItem>
     <Transition name="crumbs" mode="out-in">
       <BreadItem :key="categoryData.id">{{ categoryData.name }}</BreadItem>
     </Transition>
-  </Bread>
-  <Banner></Banner>
-  <div class="all-category">
-    <h3>全部分类</h3>
-    <ul class="all-category-list">
-      <li v-for="category in categoryData.children" :key="category.id" @click="toSub(category.id)">
-        <a href="javascript:;">
-          <img :src="(category.picture as string)" alt="">
-          <p>{{ category.name }}</p>
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div class="category" v-for="category in categoryData.children" :key="category.id">
-    <h3>- {{ category.name }} -</h3>
-    <a class="view-more">查看全部 <i class="iconfont iconxiangyoujiantou"></i></a>
-    <p class="describe">温暖柔软，品质之选</p>
-    <ul class="category-list">
-      <li v-for="goods in category.goods" :key="goods.id">
-        <router-link :to="`/product/${goods.id}`">
-          <img :src="goods.picture" alt="">
-          <p>{{ goods.desc }}</p>
-          <p>{{ goods.name }}</p>
-          <p>￥{{ goods.price }}</p>
-        </router-link>
-      </li>
-    </ul>
+  </Bread> -->
+  <div class="container">
+    <el-breadcrumb :separator-icon="ArrowRight">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ categoryData.name }}</el-breadcrumb-item>
+    </el-breadcrumb>
+    <BreadCrumb :breadItemList="breadItemList"></BreadCrumb>
+    <Banner></Banner>
+    <div class="all-category">
+      <h3>全部分类</h3>
+      <ul class="all-category-list">
+        <li v-for="category in categoryData.children" :key="category.id" @click="toSub(category.id)">
+          <a href="javascript:;">
+            <img :src="(category.picture as string)" alt="">
+            <p>{{ category.name }}</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="category" v-for="category in categoryData.children" :key="category.id">
+      <h3>- {{ category.name }} -</h3>
+      <a class="view-more">查看全部 <i class="iconfont iconxiangyoujiantou"></i></a>
+      <p class="describe">温暖柔软，品质之选</p>
+      <ul class="category-list">
+        <li v-for="goods in category.goods" :key="goods.id">
+          <router-link :to="`/product/${goods.id}`">
+            <img :src="goods.picture" alt="">
+            <p>{{ goods.desc }}</p>
+            <p>{{ goods.name }}</p>
+            <p>￥{{ goods.price }}</p>
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter,useRoute } from 'vue-router'
 import { useCategoryStore } from '@/store/category'
 import { storeToRefs } from 'pinia'
+import { ArrowRight } from '@element-plus/icons-vue'
+import { CategoryData } from '@/api/category';
+import type{ BreadItem } from '@/types/BreadItem';
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const { categoryData } = storeToRefs(categoryStore)
@@ -52,12 +62,27 @@ const toSub = (categoryId: string) => {
     path: '/category/sub/' + categoryId
   })
 }
+const breadItemList = ref<Array<BreadItem>>([])
+const getBreadItemData = (categoryData: CategoryData) => {
+  breadItemList.value.push(
+    {
+      layer: 1,
+      id: categoryData.id as string,
+      title: categoryData.name as string,
+      path: '/category'
+    },
+  )
+}
 // 利用导航守卫，路由更新时触发，点击导航路由变更时，请求对应分类数据，要结合onMounted使用
 onBeforeRouteUpdate(to => {
-  categoryStore.reqCategoryStoreData(to.params.id as string)
+  categoryStore.reqCategoryStoreData(to.params.id as string).then(()=>{
+    getBreadItemData(categoryData.value)
+  })
 })
 onMounted(() => {
-  categoryStore.reqCategoryStoreData(router.currentRoute.value.params.id as string)
+  categoryStore.reqCategoryStoreData(router.currentRoute.value.params.id as string).then(()=>{
+    getBreadItemData(categoryData.value)
+  })
 })
 </script>
 
@@ -200,5 +225,17 @@ h3 {
   font-weight: normal;
   text-align: center;
   line-height: 100px;
+}
+
+:deep(.el-breadcrumb) {
+  padding: 25px 10px;
+
+  .is-link {
+    font-weight: normal;
+  }
+
+  .is-link:hover {
+    color: @bgColor;
+  }
 }
 </style>
